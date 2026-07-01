@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#F4A6A6" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Tulip Trays" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/svg+xml" href="icon.svg" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>Tulip Trays 🌷</title>
+<style>
+  :root{
+    --pink-soft:#F6C6C6;
+    --pink:#F4A6A6;
+    --pink-deep:#E88C8C;
+    --blue-soft:#BFD7ED;
+    --blue:#AFC9E8;
+    --blue-deep:#8FB4DF;
+    --cream:#FFF8F4;
+    --cream-2:#FFF1EC;
+    --ink:#6B5B57;
+    --ink-soft:#9A8A85;
+    --white:#ffffff;
+    --shadow:0 10px 30px rgba(228,150,150,.20);
+    --shadow-sm:0 6px 16px rgba(150,150,180,.16);
+    --radius:26px;
+    --radius-lg:34px;
+    --smiski:#D6EAD8;
+    --smiski-shade:#BEDCC2;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Nunito",Roboto,"Helvetica Neue",sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, var(--cream-2), transparent 60%),
+      linear-gradient(180deg,var(--cream) 0%, #FFF4F5 100%);
+    color:var(--ink);
+    min-height:100vh;
+    min-height:100dvh;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    letter-spacing:.2px;
+  }
+  #app{
+    max-width:480px;
+    margin:0 auto;
+    padding:calc(env(safe-area-inset-top) + 10px) 16px calc(env(safe-area-inset-bottom) + 96px);
+    position:relative;
+    min-height:100dvh;
+  }
+  /* ---------- Header ---------- */
+  header{
+    display:flex;align-items:center;gap:12px;
+    padding:8px 6px 4px;
+  }
+  .logo{
+    width:52px;height:52px;flex:0 0 auto;
+    filter:drop-shadow(0 6px 10px rgba(228,150,150,.35));
+    animation:floaty 5s ease-in-out infinite;
+  }
+  header h1{
+    font-size:22px;margin:0;font-weight:800;letter-spacing:.4px;
+    background:linear-gradient(90deg,var(--pink-deep),var(--blue-deep));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  header .sub{font-size:12.5px;color:var(--ink-soft);margin-top:1px;}
+  .welcome{
+    margin:10px 4px 4px;
+    background:linear-gradient(120deg,#fff,rgba(191,215,237,.28));
+    border:1.5px solid rgba(244,166,166,.35);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    display:flex;align-items:center;gap:12px;
+    box-shadow:var(--shadow-sm);
+    animation:fadeUp .7s ease both;
+  }
+  .welcome .smiski{width:46px;height:46px;flex:0 0 auto;}
+  .welcome p{margin:0;font-size:14px;line-height:1.35;font-weight:600;}
+  .welcome small{color:var(--ink-soft);font-weight:600;}
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--white);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:20px;
+    margin:14px 0;
+    animation:fadeUp .55s ease both;
+    border:1px solid rgba(255,255,255,.6);
+  }
+  .card h2{
+    font-size:16px;margin:0 0 2px;font-weight:800;color:var(--ink);
+    display:flex;align-items:center;gap:8px;
+  }
+  .card .hint{font-size:12.5px;color:var(--ink-soft);margin:0 0 6px;font-weight:600;}
+  .center{text-align:center;}
+
+  /* ---------- Progress ring ---------- */
+  .ring-wrap{position:relative;width:230px;height:230px;margin:6px auto 4px;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-track{stroke:#EAF1F8;}
+  .ring-fill{stroke:url(#ringGrad);stroke-linecap:round;transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1);}
+  .ring-center{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;gap:2px;
+  }
+  .ring-center .tulip{width:46px;height:46px;margin-bottom:2px;}
+  .ring-center .big{font-size:34px;font-weight:800;line-height:1;color:var(--blue-deep);}
+  .ring-center .goal{font-size:13px;color:var(--ink-soft);font-weight:700;}
+  .ring-center .pct{font-size:12px;color:var(--pink-deep);font-weight:800;margin-top:2px;}
+
+  /* ---------- Big toggle ---------- */
+  .toggle-btn{
+    border:none;cursor:pointer;
+    width:100%;padding:20px;margin-top:6px;
+    border-radius:var(--radius);
+    font-size:20px;font-weight:800;color:#fff;letter-spacing:.6px;
+    box-shadow:var(--shadow);
+    transition:transform .12s ease, box-shadow .2s ease, background .4s ease;
+    display:flex;align-items:center;justify-content:center;gap:12px;
+  }
+  .toggle-btn .dot{width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px rgba(255,255,255,.35);animation:pulse 1.8s ease-in-out infinite;}
+  .toggle-in{background:linear-gradient(135deg,var(--blue),var(--blue-deep));}
+  .toggle-out{background:linear-gradient(135deg,var(--pink),var(--pink-deep));}
+  .toggle-btn:active{transform:scale(.96);}
+  .status-line{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:12px;font-weight:700;}
+  .status-line b{color:var(--pink-deep);}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    border:none;cursor:pointer;border-radius:20px;font-weight:800;font-size:15px;
+    padding:14px 18px;color:#fff;background:linear-gradient(135deg,var(--pink),var(--pink-deep));
+    box-shadow:var(--shadow-sm);transition:transform .12s ease,filter .2s ease;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  }
+  .btn:active{transform:scale(.95);}
+  .btn.blue{background:linear-gradient(135deg,var(--blue),var(--blue-deep));}
+  .btn.ghost{background:#fff;color:var(--pink-deep);border:1.5px solid var(--pink-soft);box-shadow:none;}
+  .btn.small{padding:9px 14px;font-size:13px;width:auto;border-radius:14px;}
+  .btn-row{display:flex;gap:10px;margin-top:12px;}
+
+  /* ---------- Stepper / inputs ---------- */
+  .field{margin-top:14px;}
+  .field label{display:block;font-size:13px;font-weight:800;margin-bottom:7px;color:var(--ink);}
+  .stepper{display:flex;align-items:center;gap:12px;justify-content:center;}
+  .stepper button{
+    width:44px;height:44px;border-radius:16px;border:none;cursor:pointer;
+    font-size:24px;font-weight:800;color:var(--pink-deep);background:var(--cream-2);
+    box-shadow:var(--shadow-sm);transition:transform .12s ease;
+  }
+  .stepper button:active{transform:scale(.9);}
+  .stepper .val{font-size:26px;font-weight:800;min-width:74px;text-align:center;color:var(--ink);}
+  .stepper .val small{display:block;font-size:11px;color:var(--ink-soft);font-weight:700;}
+
+  /* ---------- Countdown ---------- */
+  .count-big{font-size:40px;font-weight:800;text-align:center;color:var(--blue-deep);line-height:1;margin:6px 0 2px;letter-spacing:.5px;}
+  .count-sub{text-align:center;font-size:13px;color:var(--ink-soft);font-weight:700;}
+  .mini-ring-wrap{position:relative;width:150px;height:150px;margin:4px auto 8px;}
+  .mini-ring-wrap svg{transform:rotate(-90deg);}
+  .mini-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+
+  /* ---------- History dots ---------- */
+  .history{display:flex;justify-content:space-between;gap:6px;margin-top:14px;}
+  .day-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+  .day-bar{width:100%;max-width:30px;height:64px;background:#EEF3F8;border-radius:12px;position:relative;overflow:hidden;}
+  .day-bar .fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,var(--blue),var(--blue-deep));border-radius:12px;transition:height .8s cubic-bezier(.2,.8,.2,1);}
+  .day-bar.met .fill{background:linear-gradient(180deg,#B6E3C0,#7FCB94);}
+  .day-lbl{font-size:10.5px;color:var(--ink-soft);font-weight:800;}
+  .day-check{font-size:12px;height:14px;}
+
+  /* ---------- Streak ---------- */
+  .streak-hero{display:flex;align-items:center;gap:16px;}
+  .streak-stem{width:70px;height:96px;flex:0 0 auto;}
+  .streak-num{font-size:44px;font-weight:800;color:var(--pink-deep);line-height:1;}
+  .streak-lbl{font-size:13px;color:var(--ink-soft);font-weight:800;}
+  .affirm{margin-top:14px;background:linear-gradient(120deg,rgba(191,215,237,.35),rgba(246,198,198,.35));border-radius:18px;padding:12px 14px;font-size:13.5px;font-weight:700;text-align:center;}
+
+  /* ---------- Photos ---------- */
+  .photo-note{font-size:11.5px;color:var(--ink-soft);background:#FFF3D8;border:1px solid #FCE4A8;border-radius:14px;padding:9px 12px;margin-top:12px;font-weight:700;line-height:1.35;}
+  .timeline{display:flex;flex-direction:column;gap:14px;margin-top:16px;}
+  .photo-card{border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);background:#fff;animation:fadeUp .5s ease both;position:relative;}
+  .photo-card img{width:100%;display:block;object-fit:cover;max-height:340px;}
+  .photo-card .cap{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font-size:12.5px;font-weight:800;color:var(--ink-soft);}
+  .photo-card .del{border:none;background:rgba(255,255,255,.85);color:var(--pink-deep);border-radius:12px;font-weight:800;font-size:12px;padding:6px 10px;cursor:pointer;}
+  .empty{
+    text-align:center;padding:26px 16px;color:var(--ink-soft);
+  }
+  .empty .smiski{width:96px;height:96px;margin:0 auto 8px;display:block;}
+  .empty p{font-size:14px;font-weight:700;margin:6px 0 0;}
+
+  /* ---------- Bottom nav ---------- */
+  nav.tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    max-width:480px;margin:0 auto;
+    background:rgba(255,255,255,.86);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-top:1px solid rgba(244,166,166,.25);
+    display:flex;justify-content:space-around;
+    padding:8px 6px calc(env(safe-area-inset-bottom) + 8px);
+    box-shadow:0 -8px 24px rgba(228,150,150,.12);
+  }
+  nav.tabbar button{
+    border:none;background:none;cursor:pointer;flex:1;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    color:var(--ink-soft);font-size:10.5px;font-weight:800;padding:4px 0;
+    transition:color .2s ease,transform .12s ease;
+  }
+  nav.tabbar button svg{width:24px;height:24px;transition:transform .2s ease;}
+  nav.tabbar button.active{color:var(--pink-deep);}
+  nav.tabbar button.active svg{transform:translateY(-2px) scale(1.12);}
+  nav.tabbar button:active{transform:scale(.9);}
+
+  /* ---------- Screens ---------- */
+  .screen{display:none;}
+  .screen.active{display:block;animation:fadeIn .4s ease both;}
+
+  /* ---------- Toast ---------- */
+  #toast{
+    position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:12px 18px;border-radius:20px;font-weight:800;font-size:13.5px;
+    opacity:0;pointer-events:none;transition:all .35s cubic-bezier(.2,.8,.2,1);z-index:60;max-width:88%;text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ---------- FX layer ---------- */
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden;}
+  .petal{position:absolute;top:-40px;will-change:transform,opacity;animation:fall linear forwards;}
+  .bloom-overlay{
+    position:fixed;inset:0;z-index:65;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    background:radial-gradient(circle at 50% 40%,rgba(255,248,244,.92),rgba(255,241,236,.86));
+    opacity:0;pointer-events:none;transition:opacity .4s ease;
+  }
+  .bloom-overlay.show{opacity:1;pointer-events:auto;}
+  .bloom-overlay .big-smiski{width:150px;height:150px;animation:happyHop 1s ease infinite;}
+  .bloom-overlay .bloom-title{font-size:24px;font-weight:800;margin-top:6px;
+    background:linear-gradient(90deg,var(--pink-deep),var(--blue-deep));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .bloom-overlay .bloom-sub{font-size:14px;color:var(--ink-soft);font-weight:700;margin-top:4px;text-align:center;padding:0 30px;}
+  .bloom-overlay .tap{font-size:12px;color:var(--ink-soft);margin-top:22px;font-weight:700;opacity:.8;}
+  .bloom-flowers{position:absolute;inset:0;pointer-events:none;}
+
+  /* ---------- Animations ---------- */
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-6px) rotate(2deg);}}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(.7);opacity:.5;}}
+  @keyframes fall{
+    0%{transform:translateY(0) rotate(0);opacity:1;}
+    100%{transform:translateY(105vh) rotate(540deg);opacity:.9;}
+  }
+  @keyframes happyHop{0%,100%{transform:translateY(0);}30%{transform:translateY(-18px) scale(1.04);}60%{transform:translateY(0);}}
+  @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.035);}}
+  @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 6px rgba(174,201,232,.5));}50%{filter:drop-shadow(0 0 16px rgba(174,201,232,.95));}}
+  .smiski-idle{animation:breathe 4s ease-in-out infinite, glowPulse 4.5s ease-in-out infinite;transform-origin:center bottom;}
+  @keyframes popIn{0%{transform:scale(0) rotate(-30deg);opacity:0;}70%{transform:scale(1.2) rotate(8deg);}100%{transform:scale(1) rotate(0);opacity:1;}}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="logo" id="logoSlot"></div>
+    <div>
+      <h1>Tulip Trays</h1>
+      <div class="sub">your little smile companion 🌷</div>
+    </div>
+  </header>
+
+  <div class="welcome" id="welcome"></div>
+
+  <!-- HOME -->
+  <section class="screen active" id="screen-home">
+    <div class="card center">
+      <h2 style="justify-content:center">Today's wear time</h2>
+      <div class="hint" id="home-date"></div>
+      <div class="ring-wrap">
+        <svg width="230" height="230" viewBox="0 0 230 230">
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#BFD7ED"/>
+              <stop offset="1" stop-color="#8FB4DF"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="115" cy="115" r="100" fill="none" stroke-width="18"/>
+          <circle class="ring-fill" id="ring" cx="115" cy="115" r="100" fill="none" stroke-width="18"
+            stroke-dasharray="628.3" stroke-dashoffset="628.3"/>
+        </svg>
+        <div class="ring-center">
+          <div class="tulip" id="ringTulip"></div>
+          <div class="big" id="wornHours">0.0</div>
+          <div class="goal" id="goalLabel">of 22h goal</div>
+          <div class="pct" id="wornPct">0%</div>
+        </div>
+      </div>
+      <button class="toggle-btn toggle-out" id="toggleBtn" onclick="toggleWear()">
+        <span class="dot" style="display:none"></span>
+        <span id="toggleLabel">Pop trays IN</span>
+      </button>
+      <div class="status-line" id="statusLine"></div>
+    </div>
+
+    <div class="card">
+      <h2>Last 7 days</h2>
+      <div class="hint">Green means you hit your 22h goal 💙</div>
+      <div class="history" id="history"></div>
+    </div>
+
+    <div class="card">
+      <h2>Daily goal</h2>
+      <div class="hint">How many hours you're aiming for each day.</div>
+      <div class="stepper">
+        <button onclick="adjGoal(-1)">–</button>
+        <div class="val"><span id="goalVal">22</span><small>hours / day</small></div>
+        <button onclick="adjGoal(1)">+</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANDS -->
+  <section class="screen" id="screen-bands">
+    <div class="card center">
+      <h2 style="justify-content:center">Rubber band change</h2>
+      <div class="hint" id="bandStateHint"></div>
+      <div class="mini-ring-wrap">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle class="ring-track" cx="75" cy="75" r="64" fill="none" stroke-width="13"/>
+          <circle class="ring-fill" id="bandRing" cx="75" cy="75" r="64" fill="none" stroke-width="13"
+            stroke="url(#ringGrad)" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="0"/>
+        </svg>
+        <div class="mini-center">
+          <div class="tulip" id="bandTulip" style="width:34px;height:34px"></div>
+        </div>
+      </div>
+      <div class="count-big" id="bandCountdown">--</div>
+      <div class="count-sub">until your next band change</div>
+      <button class="btn blue" style="margin-top:16px" onclick="doneBands()">✨ Done! Fresh bands in</button>
+    </div>
+
+    <div class="card">
+      <h2>Change interval</h2>
+      <div class="hint">How often you swap to fresh bands.</div>
+      <div class="stepper">
+        <button onclick="adjBand(-1)">–</button>
+        <div class="val"><span id="bandVal">12</span><small>hours</small></div>
+        <button onclick="adjBand(1)">+</button>
+      </div>
+      <div class="center" style="margin-top:14px;font-size:12.5px;color:var(--ink-soft);font-weight:700">
+        That's about <b id="bandPerDay">2</b>× per day 🌷
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAYS -->
+  <section class="screen" id="screen-trays">
+    <div class="card center">
+      <h2 style="justify-content:center">Current tray</h2>
+      <div class="tulip" id="trayTulip" style="width:56px;height:56px;margin:8px auto 4px"></div>
+      <div style="font-size:30px;font-weight:800;color:var(--pink-deep)">Tray <span id="trayNum">7</span></div>
+      <div class="count-sub">of <span id="trayTotal">24</span> total</div>
+      <div style="margin:16px 0 4px;height:12px;background:#EEF3F8;border-radius:10px;overflow:hidden">
+        <div id="trayProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--pink),var(--pink-deep));border-radius:10px;transition:width .8s cubic-bezier(.2,.8,.2,1)"></div>
+      </div>
+      <div class="count-big" id="trayDaysLeft" style="margin-top:16px">--</div>
+      <div class="count-sub">until it's time for the next tray</div>
+      <button class="btn" style="margin-top:16px" onclick="switchTray()">🌷 Switch to next tray</button>
+    </div>
+
+    <div class="card">
+      <h2>Days per tray</h2>
+      <div class="hint">How long you wear each tray before switching.</div>
+      <div class="stepper">
+        <button onclick="adjTrayDur(-1)">–</button>
+        <div class="val"><span id="trayDurVal">7</span><small>days each</small></div>
+        <button onclick="adjTrayDur(1)">+</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Total trays</h2>
+      <div class="hint">How many trays in your whole plan.</div>
+      <div class="stepper">
+        <button onclick="adjTrayTotal(-1)">–</button>
+        <div class="val"><span id="trayTotalVal">24</span><small>trays</small></div>
+        <button onclick="adjTrayTotal(1)">+</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost small" onclick="adjTrayNum(-1)">– tray #</button>
+        <button class="btn ghost small" onclick="resetTrayTimer()">restart timer</button>
+        <button class="btn ghost small" onclick="adjTrayNum(1)">+ tray #</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="screen" id="screen-progress">
+    <div class="card">
+      <h2>🔥 Your streak</h2>
+      <div class="hint">Consecutive days you've hit your wear-time goal.</div>
+      <div class="streak-hero">
+        <div class="streak-stem" id="streakStem"></div>
+        <div>
+          <div class="streak-num"><span id="streakNum">0</span> <span style="font-size:20px">days</span></div>
+          <div class="streak-lbl" id="streakLbl">let's start a lovely little streak</div>
+        </div>
+      </div>
+      <div class="affirm" id="affirm"></div>
+    </div>
+
+    <div class="card">
+      <h2>📸 Smile progress</h2>
+      <div class="hint">Snap your smile now and then to watch it transform.</div>
+      <label class="btn blue" for="photoInput" style="margin-top:6px">＋ Add a photo</label>
+      <input id="photoInput" type="file" accept="image/*" capture="user" style="display:none" onchange="addPhoto(event)"/>
+      <div class="photo-note" id="photoNote">💡 Photos are saved right here in your phone's browser. They stay unless you clear your browser data.</div>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+</div>
+
+<!-- Bottom nav -->
+<nav class="tabbar" id="tabbar"></nav>
+
+<div id="toast"></div>
+<div id="fx"></div>
+<div class="bloom-overlay" id="bloom" onclick="hideBloom()">
+  <div class="bloom-flowers" id="bloomFlowers"></div>
+  <div class="big-smiski" id="bloomSmiski"></div>
+  <div class="bloom-title" id="bloomTitle">Yay!</div>
+  <div class="bloom-sub" id="bloomSub"></div>
+  <div class="tap">tap anywhere to keep going 💕</div>
+</div>
+
+<script>
+/* ============================================================
+   Tulip Trays — a little Invisalign companion, made with love
+   ============================================================ */
+
+/* ---------- SVG assets ---------- */
+function tulipSVG(scale){
+  return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      <path d="M32 60 C32 46 32 40 32 34" stroke="#7FBF8E" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M32 46 C20 44 14 36 15 28 C24 30 30 36 32 44 Z" fill="#9BD3A8"/>
+      <path d="M32 50 C44 48 50 40 49 32 C40 34 34 40 32 48 Z" fill="#B6E3C0"/>
+      <path d="M20 20 C18 10 24 4 32 4 C40 4 46 10 44 20 C44 28 38 34 32 34 C26 34 20 28 20 20 Z" fill="#F4A6A6"/>
+      <path d="M20 20 C20 12 24 6 32 6 C32 14 32 26 32 34 C26 34 20 28 20 20 Z" fill="#F6C6C6"/>
+      <path d="M44 20 C44 12 40 6 32 6 C32 14 32 26 32 34 C38 34 44 28 44 20 Z" fill="#E88C8C"/>
+      <path d="M32 6 C28 12 27 20 28 30" stroke="#E88C8C" stroke-width="1.6" fill="none" opacity=".5"/>
+      <path d="M32 6 C36 12 37 20 36 30" stroke="#D67B7B" stroke-width="1.6" fill="none" opacity=".5"/>
+    </g>
+  </svg>`;
+}
+/* Smiski-style blob mascot. mood: 'idle' | 'happy' | 'tulip' */
+function smiskiSVG(mood){
+  const arms = mood==='happy'
+    ? `<path d="M18 40 C10 34 8 24 12 20" stroke="#BEDCC2" stroke-width="7" fill="none" stroke-linecap="round"/>
+       <path d="M62 40 C70 34 72 24 68 20" stroke="#BEDCC2" stroke-width="7" fill="none" stroke-linecap="round"/>`
+    : mood==='tulip'
+    ? `<path d="M18 42 C12 40 9 34 11 29" stroke="#BEDCC2" stroke-width="7" fill="none" stroke-linecap="round"/>
+       <path d="M62 42 C68 38 70 30 66 24" stroke="#BEDCC2" stroke-width="7" fill="none" stroke-linecap="round"/>
+       <g transform="translate(60,10) scale(.28)">${tulipSVG()}</g>`
+    : `<path d="M18 44 C13 44 10 40 11 35" stroke="#BEDCC2" stroke-width="7" fill="none" stroke-linecap="round"/>
+       <path d="M62 44 C67 44 70 40 69 35" stroke="#BEDCC2" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+  const mouth = mood==='happy'
+    ? `<path d="M33 44 Q40 52 47 44" stroke="#7A8C7E" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+    : `<path d="M35 44 Q40 49 45 44" stroke="#7A8C7E" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  const eyes = mood==='happy'
+    ? `<path d="M28 35 Q31 31 34 35" stroke="#5E6B62" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+       <path d="M46 35 Q49 31 52 35" stroke="#5E6B62" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+    : `<circle cx="31" cy="36" r="2.6" fill="#5E6B62"/><circle cx="49" cy="36" r="2.6" fill="#5E6B62"/>`;
+  return `<svg viewBox="0 0 80 80" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="74" rx="20" ry="4" fill="#000" opacity=".06"/>
+    ${arms}
+    <path d="M22 40 C22 24 30 14 40 14 C50 14 58 24 58 40 C58 40 60 66 40 66 C20 66 22 40 22 40 Z" fill="#D6EAD8"/>
+    <path d="M28 26 C31 20 36 17 40 17 C40 30 40 30 40 30 C34 30 30 28 28 26 Z" fill="#E6F3E8" opacity=".8"/>
+    <ellipse cx="33" cy="42" rx="4" ry="2.6" fill="#F4A6A6" opacity=".45"/>
+    <ellipse cx="47" cy="42" rx="4" ry="2.6" fill="#F4A6A6" opacity=".45"/>
+    ${eyes}
+    ${mouth}
+  </svg>`;
+}
+/* Combined app logo: tulip growing from a smiski silhouette */
+function logoSVG(){
+  return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 52 C18 40 24 33 32 33 C40 33 46 40 46 52 C46 60 40 60 32 60 C24 60 18 60 18 52 Z" fill="#CDEBD3"/>
+    <circle cx="27" cy="46" r="1.8" fill="#5E6B62"/><circle cx="37" cy="46" r="1.8" fill="#5E6B62"/>
+    <path d="M28 50 Q32 54 36 50" stroke="#7A8C7E" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M32 34 C32 26 32 22 32 18" stroke="#7FBF8E" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M18 8 C16 2 20 -1 26 1 C24 6 22 9 18 10 Z" transform="translate(6,6)" fill="#F4A6A6"/>
+    <path d="M20 12 C18 4 24 0 32 0 C40 0 46 4 44 12 C44 18 38 22 32 22 C26 22 20 18 20 12 Z" fill="#F4A6A6"/>
+    <path d="M20 12 C20 6 24 2 32 2 C32 8 32 16 32 22 C26 22 20 18 20 12 Z" fill="#F6C6C6"/>
+    <path d="M44 12 C44 6 40 2 32 2 C32 8 32 16 32 22 C38 22 44 18 44 12 Z" fill="#E88C8C"/>
+  </svg>`;
+}
+
+/* ---------- Storage ---------- */
+const KEY='tulipTrays.v1';
+const todayKey=(d=new Date())=>{
+  const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+};
+const dayName=(d)=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+
+const defaultState={
+  isIn:false,
+  lastTick:Date.now(),
+  wearLog:{},              // dateKey -> seconds worn
+  goalHours:22,
+  bandIntervalH:12,
+  lastBandChange:Date.now(),
+  trayNum:7,
+  trayTotal:24,
+  trayDurDays:7,
+  trayStart:Date.now(),
+  photos:[],               // {date, src}
+  bestStreak:0,
+  seenWelcome:false
+};
+let state=load();
+
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(!raw) return {...defaultState};
+    return {...defaultState,...JSON.parse(raw)};
+  }catch(e){ return {...defaultState}; }
+}
+function save(){
+  try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){ /* storage full (photos) */ }
+}
+
+/* ---------- Wear time accounting ---------- */
+function accrue(){
+  const now=Date.now();
+  if(state.isIn){
+    let last=state.lastTick||now;
+    // walk across midnight boundaries so each day gets its share
+    while(true){
+      const lastDate=new Date(last);
+      const midnight=new Date(lastDate.getFullYear(),lastDate.getMonth(),lastDate.getDate()+1,0,0,0,0).getTime();
+      const end=Math.min(now,midnight);
+      const secs=(end-last)/1000;
+      if(secs>0){
+        const k=todayKey(new Date(last));
+        state.wearLog[k]=(state.wearLog[k]||0)+secs;
+      }
+      if(end>=now) break;
+      last=end;
+    }
+  }
+  state.lastTick=now;
+}
+const wornSecondsToday=()=> state.wearLog[todayKey()]||0;
+const wornHoursToday=()=> wornSecondsToday()/3600;
+
+/* ---------- Streak ---------- */
+function metGoal(dateKey){ return (state.wearLog[dateKey]||0)/3600 >= state.goalHours; }
+function currentStreak(){
+  let streak=0;
+  let d=new Date();
+  if(!metGoal(todayKey(d))){ d.setDate(d.getDate()-1); } // grace: today still in progress
+  while(metGoal(todayKey(d))){ streak++; d.setDate(d.getDate()-1); }
+  return streak;
+}
+
+/* ---------- Navigation ---------- */
+const tabs=[
+  {id:'home', label:'Home', icon:'M3 11.5 12 4l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z'},
+  {id:'bands',label:'Bands',icon:'M12 3a9 9 0 1 0 9 9M12 3a9 9 0 0 1 9 9M12 3v0M15 3l3 1M12 8v4l3 2'},
+  {id:'trays',label:'Trays',icon:'M5 8c0-2 3-3 7-3s7 1 7 3-1 9-2 10-3 1-5 1-4 0-5-1S5 10 5 8Z'},
+  {id:'progress',label:'Progress',icon:'M4 20V10M10 20V4M16 20v-7M4 20h16'}
+];
+let activeTab='home';
+function buildTabs(){
+  const nav=document.getElementById('tabbar');
+  nav.innerHTML=tabs.map(t=>`
+    <button data-tab="${t.id}" onclick="go('${t.id}')" class="${t.id===activeTab?'active':''}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${t.icon}"/></svg>
+      ${t.label}
+    </button>`).join('');
+}
+function go(id){
+  activeTab=id;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('#tabbar button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ---------- Actions ---------- */
+function toggleWear(){
+  accrue();
+  state.isIn=!state.isIn;
+  state.lastTick=Date.now();
+  save(); render();
+  if(state.isIn){
+    toast('In they go — you\'ve got this 💙');
+  }else{
+    toast('Trays out — enjoy, come back soon 🌷');
+  }
+  // celebrate if goal just crossed
+  checkGoalCelebration();
+}
+let celebratedToday=null;
+function checkGoalCelebration(){
+  const k=todayKey();
+  if(metGoal(k) && celebratedToday!==k){
+    celebratedToday=k;
+    petalRain(26);
+    const s=currentStreak();
+    toast(s>1?`${s} days in a row — your smile thanks you 💙`:'22 hours today — you did it! 🌷');
+  }
+}
+
+function adjGoal(d){ state.goalHours=Math.min(24,Math.max(1,state.goalHours+d)); save(); render(); }
+function adjBand(d){ state.bandIntervalH=Math.min(48,Math.max(1,state.bandIntervalH+d)); save(); render(); }
+function doneBands(){
+  state.lastBandChange=Date.now(); save(); render();
+  petalRain(18);
+  toast('Fresh bands in — nicely done ✨');
+}
+function adjTrayDur(d){ state.trayDurDays=Math.min(60,Math.max(1,state.trayDurDays+d)); save(); render(); }
+function adjTrayTotal(d){ state.trayTotal=Math.min(120,Math.max(state.trayNum,state.trayTotal+d)); save(); render(); }
+function adjTrayNum(d){ state.trayNum=Math.min(state.trayTotal,Math.max(1,state.trayNum+d)); save(); render(); }
+function resetTrayTimer(){ state.trayStart=Date.now(); save(); render(); toast('Tray timer restarted 🌷'); }
+function switchTray(){
+  if(state.trayNum>=state.trayTotal){
+    bloom('All done! 🎉',`You finished all ${state.trayTotal} trays. Look at that gorgeous smile — I'm so proud of you 💕`,'happy');
+    petalRain(50);
+    return;
+  }
+  state.trayNum++;
+  state.trayStart=Date.now();
+  save(); render();
+  bloom(`Tray ${state.trayNum}! 🌷`,`One step closer to that perfect smile. ${state.trayTotal-state.trayNum} tray${state.trayTotal-state.trayNum===1?'':'s'} to go — you're doing amazing 💕`,'happy');
+  petalRain(40);
+}
+
+/* ---------- Photos ---------- */
+function addPhoto(e){
+  const file=e.target.files&&e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    // downscale to keep localStorage happy
+    const img=new Image();
+    img.onload=()=>{
+      const max=900;
+      let {width:w,height:h}=img;
+      if(w>max||h>max){ const r=Math.min(max/w,max/h); w=Math.round(w*r); h=Math.round(h*r); }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      const src=c.toDataURL('image/jpeg',0.82);
+      state.photos.unshift({date:Date.now(),src});
+      save();
+      // if quota exceeded, save() silently failed — warn if needed
+      try{ localStorage.setItem(KEY,localStorage.getItem(KEY)); }catch(_){}
+      renderPhotos();
+      toast('Added — look at that smile 💕');
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+function delPhoto(ts){
+  if(!confirm('Remove this photo?')) return;
+  state.photos=state.photos.filter(p=>p.date!==ts);
+  save(); renderPhotos();
+}
+
+/* ---------- Rendering ---------- */
+function fmtHM(totalMin){
+  const m=Math.max(0,Math.round(totalMin));
+  const h=Math.floor(m/60), mm=m%60;
+  return `${h}h ${String(mm).padStart(2,'0')}m`;
+}
+function render(){
+  // HOME ring
+  const worn=wornHoursToday();
+  const goal=state.goalHours;
+  const pct=Math.min(1,worn/goal);
+  const C=2*Math.PI*100;
+  document.getElementById('ring').setAttribute('stroke-dashoffset', C*(1-pct));
+  document.getElementById('wornHours').textContent=worn.toFixed(1);
+  document.getElementById('goalLabel').textContent='of '+goal+'h goal';
+  document.getElementById('wornPct').textContent=Math.round(pct*100)+'%';
+  document.getElementById('goalVal').textContent=goal;
+  document.getElementById('home-date').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+
+  // toggle button
+  const btn=document.getElementById('toggleBtn');
+  const dot=btn.querySelector('.dot');
+  if(state.isIn){
+    btn.className='toggle-btn toggle-in';
+    document.getElementById('toggleLabel').textContent='Take trays OUT';
+    dot.style.display='inline-block';
+  }else{
+    btn.className='toggle-btn toggle-out';
+    document.getElementById('toggleLabel').textContent='Pop trays IN';
+    dot.style.display='none';
+  }
+  // status line
+  const remaining=Math.max(0,goal-worn);
+  const sl=document.getElementById('statusLine');
+  if(pct>=1){ sl.innerHTML='🎉 <b>Goal reached!</b> You\'re glowing today 💙'; }
+  else if(state.isIn){ sl.innerHTML=`Currently wearing — <b>${fmtHM(remaining*60)}</b> to go`; }
+  else { sl.innerHTML=`Trays are out — <b>${fmtHM(remaining*60)}</b> left for today 🌷`; }
+
+  renderHistory();
+
+  // BANDS
+  document.getElementById('bandVal').textContent=state.bandIntervalH;
+  document.getElementById('bandPerDay').textContent=(24/state.bandIntervalH).toFixed(state.bandIntervalH>=24?0:1).replace(/\.0$/,'');
+  const bandTotalMs=state.bandIntervalH*3600*1000;
+  const bandElapsed=Date.now()-state.lastBandChange;
+  const bandLeft=bandTotalMs-bandElapsed;
+  const bandPct=Math.min(1,Math.max(0,bandElapsed/bandTotalMs));
+  const BC=2*Math.PI*64;
+  document.getElementById('bandRing').setAttribute('stroke-dashoffset', BC*(1-bandPct));
+  const bc=document.getElementById('bandCountdown');
+  const bh=document.getElementById('bandStateHint');
+  if(bandLeft<=0){
+    bc.textContent='Time! 🌷';
+    bc.style.color='var(--pink-deep)';
+    bh.textContent='Swap to fresh bands whenever you\'re ready 💕';
+  }else{
+    const mins=bandLeft/60000;
+    bc.textContent=fmtHM(mins);
+    bc.style.color='var(--blue-deep)';
+    bh.textContent='You\'re on track — keep it up 💙';
+  }
+
+  // TRAYS
+  document.getElementById('trayNum').textContent=state.trayNum;
+  document.getElementById('trayTotal').textContent=state.trayTotal;
+  document.getElementById('trayDurVal').textContent=state.trayDurDays;
+  document.getElementById('trayTotalVal').textContent=state.trayTotal;
+  const trayTotalMs=state.trayDurDays*86400000;
+  const trayElapsed=Date.now()-state.trayStart;
+  const trayLeftMs=trayTotalMs-trayElapsed;
+  const daysLeft=Math.ceil(trayLeftMs/86400000);
+  const tdl=document.getElementById('trayDaysLeft');
+  if(trayLeftMs<=0){ tdl.textContent='Ready! 🌷'; tdl.style.color='var(--pink-deep)'; }
+  else{ tdl.textContent=daysLeft+(daysLeft===1?' day':' days'); tdl.style.color='var(--blue-deep)'; }
+  document.getElementById('trayProgressBar').style.width=(Math.min(1,state.trayNum/state.trayTotal)*100)+'%';
+
+  // PROGRESS
+  const streak=currentStreak();
+  if(streak>state.bestStreak){ state.bestStreak=streak; save(); }
+  document.getElementById('streakNum').textContent=streak;
+  document.getElementById('streakStem').innerHTML=stemSVG(streak);
+  const lbl=document.getElementById('streakLbl');
+  lbl.textContent = streak===0 ? 'let\'s start a lovely little streak'
+    : streak===1 ? 'day one — proud of you already 💕'
+    : `best ever: ${state.bestStreak} days 🌷`;
+  const affirm=document.getElementById('affirm');
+  affirm.textContent=affirmMsg(streak);
+
+  save();
+}
+function renderHistory(){
+  const days=[];
+  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); days.push(d); }
+  const html=days.map(d=>{
+    const k=todayKey(d);
+    const worn=(state.wearLog[k]||0)/3600;
+    const pct=Math.min(1,worn/state.goalHours);
+    const met=metGoal(k);
+    const isToday=k===todayKey();
+    return `<div class="day-col">
+      <div class="day-check">${met?'✅':(worn>0?'💙':'')}</div>
+      <div class="day-bar ${met?'met':''}"><div class="fill" style="height:${pct*100}%"></div></div>
+      <div class="day-lbl" style="${isToday?'color:var(--pink-deep)':''}">${isToday?'Today':dayName(d)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('history').innerHTML=html;
+}
+function renderPhotos(){
+  const tl=document.getElementById('timeline');
+  if(!state.photos.length){
+    tl.innerHTML=`<div class="empty">
+      <div class="smiski smiski-idle">${smiskiSVG('tulip')}</div>
+      <p>No photos yet — add your first smile 🌷<br/>Future-you will love looking back.</p>
+    </div>`;
+    return;
+  }
+  tl.innerHTML=state.photos.map(p=>{
+    const d=new Date(p.date);
+    const label=d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});
+    return `<div class="photo-card">
+      <img src="${p.src}" alt="smile ${label}"/>
+      <div class="cap"><span>🌷 ${label}</span><button class="del" onclick="delPhoto(${p.date})">remove</button></div>
+    </div>`;
+  }).join('');
+}
+
+/* growing tulip stem for streak — more leaves/bloom as streak grows */
+function stemSVG(streak){
+  const s=Math.min(streak,10);
+  const bloomOpen=streak>=3;
+  const leaves=[];
+  for(let i=0;i<Math.min(4,Math.floor(s/1.5));i++){
+    const y=78-i*15; const side=i%2===0?1:-1;
+    leaves.push(`<path d="M35 ${y} C${35+side*16} ${y-4} ${35+side*20} ${y-12} ${35+side*8} ${y-14} C${35+side*6} ${y-6} 35 ${y} 35 ${y} Z" fill="${i%2?'#B6E3C0':'#9BD3A8'}"/>`);
+  }
+  const flower = bloomOpen
+    ? `<path d="M23 22 C21 10 28 3 35 3 C42 3 49 10 47 22 C47 32 40 38 35 38 C30 38 23 32 23 22 Z" fill="#F4A6A6"/>
+       <path d="M23 22 C23 12 28 5 35 5 C35 16 35 30 35 38 C30 38 23 32 23 22 Z" fill="#F6C6C6"/>
+       <path d="M47 22 C47 12 42 5 35 5 C35 16 35 30 35 38 C40 38 47 32 47 22 Z" fill="#E88C8C"/>`
+    : `<ellipse cx="35" cy="14" rx="9" ry="13" fill="#F4A6A6"/><ellipse cx="35" cy="14" rx="5" ry="11" fill="#F6C6C6"/>`;
+  return `<svg viewBox="0 0 70 96" width="100%" height="100%">
+    <path d="M35 94 C35 70 35 55 35 ${bloomOpen?38:26}" stroke="#7FBF8E" stroke-width="4" fill="none" stroke-linecap="round"/>
+    ${leaves.join('')}
+    ${flower}
+  </svg>`;
+}
+
+function affirmMsg(streak){
+  if(streak>=30) return 'A whole month of glowing days — you are unstoppable 🌷💕';
+  if(streak>=14) return 'Two weeks strong! Your dedication is beautiful 💙';
+  if(streak>=7)  return '7 days in a row — your smile thanks you 💙';
+  if(streak>=5)  return '5 days straight — look at you go, superstar 🌷';
+  if(streak>=3)  return 'Three lovely days in a row — keep glowing ✨';
+  if(streak>=1)  return 'You showed up today, and that\'s everything 💕';
+  return 'No worries if today\'s slow — let\'s get back on track 💙';
+}
+
+/* ---------- FX ---------- */
+const PETAL_COLORS=['#F6C6C6','#F4A6A6','#E88C8C','#BFD7ED','#AFC9E8'];
+function petalRain(n=24){
+  const fx=document.getElementById('fx');
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');
+    el.className='petal';
+    const size=10+Math.random()*16;
+    el.style.left=Math.random()*100+'vw';
+    el.style.width=size+'px'; el.style.height=size+'px';
+    el.style.animationDuration=(2.6+Math.random()*2.2)+'s';
+    el.style.animationDelay=(Math.random()*0.6)+'s';
+    const c=PETAL_COLORS[i%PETAL_COLORS.length];
+    el.innerHTML=`<svg viewBox="0 0 20 20" width="100%" height="100%"><path d="M10 1 C4 3 2 9 5 15 C8 19 12 19 15 15 C18 9 16 3 10 1 Z" fill="${c}"/></svg>`;
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(),5200);
+  }
+}
+function bloom(title,sub,mood){
+  document.getElementById('bloomTitle').textContent=title;
+  document.getElementById('bloomSub').textContent=sub;
+  document.getElementById('bloomSmiski').innerHTML=smiskiSVG(mood||'happy');
+  const wrap=document.getElementById('bloomFlowers');
+  wrap.innerHTML='';
+  for(let i=0;i<14;i++){
+    const f=document.createElement('div');
+    const size=26+Math.random()*40;
+    f.style.position='absolute';
+    f.style.left=Math.random()*90+5+'%';
+    f.style.top=Math.random()*80+10+'%';
+    f.style.width=size+'px'; f.style.height=size+'px';
+    f.style.opacity='0';
+    f.style.animation=`popIn .6s ease ${0.05*i}s forwards`;
+    f.innerHTML=tulipSVG();
+    wrap.appendChild(f);
+  }
+  document.getElementById('bloom').classList.add('show');
+}
+function hideBloom(){ document.getElementById('bloom').classList.remove('show'); }
+
+let toastTimer=null;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ---------- Welcome ---------- */
+function renderWelcome(){
+  const hour=new Date().getHours();
+  const greet = hour<5?'Late night, love' : hour<12?'Good morning, love' : hour<18?'Hi love' : 'Good evening, love';
+  document.getElementById('welcome').innerHTML=`
+    <div class="smiski smiski-idle">${smiskiSVG('idle')}</div>
+    <p>${greet} — let's keep that smile glowing 🌷<br/><small>I'm cheering you on, always 💕</small></p>`;
+}
+
+/* ---------- Boot ---------- */
+function boot(){
+  document.getElementById('logoSlot').innerHTML=logoSVG();
+  document.getElementById('ringTulip').innerHTML=tulipSVG();
+  document.getElementById('bandTulip').innerHTML=tulipSVG();
+  document.getElementById('trayTulip').innerHTML=tulipSVG();
+  buildTabs();
+  renderWelcome();
+  accrue();          // account for time passed while app was closed (if it was "in")
+  if(metGoal(todayKey())) celebratedToday=todayKey(); // don't re-celebrate on load
+  render();
+  renderPhotos();
+
+  // gentle first-open hello
+  if(!state.seenWelcome){
+    state.seenWelcome=true; save();
+    setTimeout(()=>petalRain(16),500);
+  }
+
+  // ticking clock — updates ring, countdowns, accrues wear time
+  setInterval(()=>{ accrue(); render(); }, 1000);
+
+  // handle returning to the tab after background
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ accrue(); render(); renderPhotos(); }});
+
+  // register service worker for PWA (only works when served over http/https)
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+}
+document.addEventListener('DOMContentLoaded',boot);
+</script>
+</body>
+</html>
