@@ -218,6 +218,15 @@
   @keyframes floatHeart{0%{opacity:0;transform:translateY(0) scale(.5) rotate(0);}20%{opacity:1;}100%{opacity:0;transform:translateY(-64px) scale(1.15) rotate(12deg);}}
   .pet-zzz{position:absolute;top:6px;left:58%;font-size:20px;z-index:4;animation:zzzFloat 3.2s ease-in-out infinite;}
   @keyframes zzzFloat{0%,100%{transform:translateY(0);opacity:.35;}50%{transform:translateY(-9px);opacity:.9;}}
+  .pet-say{position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+    background:#fff;border:2px solid var(--pink-soft);color:var(--pink-deep);
+    font-weight:800;font-size:14.5px;padding:8px 15px;border-radius:16px;
+    box-shadow:var(--shadow-sm);white-space:nowrap;z-index:9;
+    animation:sayPop .45s cubic-bezier(.3,1.5,.5,1) both;}
+  .pet-say:after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+    border:8px solid transparent;border-top-color:#fff;}
+  @keyframes sayPop{0%{opacity:0;transform:translateX(-50%) translateY(8px) scale(.4);}100%{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}}
+  .pet-say.fade{opacity:0;transition:opacity .4s ease;}
   .pet-name{font-size:20px;font-weight:800;color:var(--ink);margin-top:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
   .pet-name .pencil{font-size:12px;color:var(--ink-soft);}
   .pet-mood{font-size:14.5px;font-weight:800;color:var(--pink-deep);margin-top:2px;}
@@ -867,8 +876,34 @@ function spawnHearts(n){
     setTimeout(()=>el.remove(),1600);
   }
 }
+// a little speech bubble above the pet
+function petSay(text){
+  const stage=document.querySelector('#petHero .pet-stage');
+  if(!stage) return;
+  const old=stage.querySelector('.pet-say'); if(old) old.remove();
+  const b=document.createElement('div');
+  b.className='pet-say'; b.textContent=text;
+  stage.appendChild(b);
+  clearTimeout(petSay._t);
+  petSay._t=setTimeout(()=>{ b.classList.add('fade'); setTimeout(()=>b.remove(),400); }, 2800);
+}
+// tapping the pet 3 times in a row -> a little "I love you" moment 💕
+let pokeCount=0, pokeReset=null;
 function petPoke(){
   if(!state.pet.chosen) return;
+  pokeCount++;
+  clearTimeout(pokeReset);
+  pokeReset=setTimeout(()=>{ pokeCount=0; },1800);   // taps must be in quick succession
+
+  if(pokeCount>=3){
+    pokeCount=0; clearTimeout(pokeReset);
+    petReact('spin');
+    spawnHearts(12);
+    petSay('I love you 💕');
+    toast(`${state.pet.name||'Your buddy'} really means it 🥺💕`);
+    return;
+  }
+
   petReact(Math.random()<0.5?'hop':'wiggle');
   spawnHearts(3);
   const n=state.pet.name||'your buddy';
