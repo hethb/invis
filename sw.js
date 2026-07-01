@@ -1,5 +1,5 @@
 /* Tulip Trays — tiny offline cache so the app opens anywhere 🌷 */
-const CACHE = 'tulip-trays-v2';
+const CACHE = 'tulip-trays-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,10 @@ const ASSETS = [
   './icon.svg',
   './icon-192.png',
   './icon-512.png',
-  './icon-maskable.png'
+  './icon-maskable.png',
+  './images/smiski-idle.png',
+  './images/smiski-happy.png',
+  './images/smiski-tulip.png'
 ];
 
 self.addEventListener('install', (e) => {
