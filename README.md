@@ -20,6 +20,12 @@ Soft pastels, rounded everything, a tulip motif, and a glow-y Smiski-style masco
 cheers her on. All data is saved locally in the browser — no accounts, no backend.
 Everything starts fresh at zero (Tray 1, no streak, empty week).
 
+## ✏️ Writing your own reminder messages
+Open `index.html` and search for **`WRITE YOUR OWN REMINDER MESSAGES`** (near the top of
+the `<script>`). Edit the `REMINDER_MESSAGES` list — each item has a `title` (bold line)
+and `body` (smaller line). Use `${pet}` anywhere and it becomes her Smiski's name. One is
+picked at random each reminder. Commit & push and it goes live in a minute or two.
+
 ## Reminders / notifications
 Turn them on from the **Reminders** card on Home. They nudge her when the trays are out.
 They work while the app is open; for alerts when it's closed, she should **add it to her

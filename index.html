@@ -204,6 +204,20 @@
   .pet-faint{filter:grayscale(.55) brightness(1.06);opacity:.6;animation:breathe 7s ease-in-out infinite;}
   @keyframes glowStrong{0%,100%{filter:drop-shadow(0 3px 10px rgba(150,220,160,.55));}50%{filter:drop-shadow(0 3px 22px rgba(150,220,160,.95));}}
   @keyframes glowSoft{0%,100%{filter:drop-shadow(0 3px 7px rgba(174,201,232,.4));}50%{filter:drop-shadow(0 3px 15px rgba(174,201,232,.8));}}
+  /* the pet is alive: a gentle idle float + one-shot reactions */
+  .pet-anim{display:inline-block;transform-origin:center bottom;cursor:pointer;animation:petFloat 4s ease-in-out infinite;}
+  @keyframes petFloat{0%,100%{transform:translateY(0) rotate(0);}25%{transform:translateY(-5px) rotate(-1.6deg);}50%{transform:translateY(-1px) rotate(0);}75%{transform:translateY(-6px) rotate(1.6deg);}}
+  .pet-sleepy ~ *,.pet-anim.calm{animation-duration:6s;}
+  .pet-anim.hop{animation:petHop .72s ease;}
+  @keyframes petHop{0%{transform:translateY(0) scaleY(1) scaleX(1);}18%{transform:translateY(2px) scaleY(.84) scaleX(1.1);}48%{transform:translateY(-28px) scaleY(1.1) scaleX(.92);}72%{transform:translateY(0) scaleY(.88) scaleX(1.08);}100%{transform:translateY(0) scaleY(1) scaleX(1);}}
+  .pet-anim.wiggle{animation:petWiggle .7s ease;}
+  @keyframes petWiggle{0%,100%{transform:rotate(0);}18%{transform:rotate(-8deg);}38%{transform:rotate(7deg);}58%{transform:rotate(-5deg);}78%{transform:rotate(3deg);}}
+  .pet-anim.spin{animation:petSpin .8s cubic-bezier(.3,1.4,.5,1);}
+  @keyframes petSpin{0%{transform:rotate(0) scale(1);}55%{transform:rotate(370deg) scale(1.08);}100%{transform:rotate(360deg) scale(1);}}
+  .float-heart{position:absolute;font-size:19px;pointer-events:none;z-index:6;animation:floatHeart 1.4s ease-out forwards;}
+  @keyframes floatHeart{0%{opacity:0;transform:translateY(0) scale(.5) rotate(0);}20%{opacity:1;}100%{opacity:0;transform:translateY(-64px) scale(1.15) rotate(12deg);}}
+  .pet-zzz{position:absolute;top:6px;left:58%;font-size:20px;z-index:4;animation:zzzFloat 3.2s ease-in-out infinite;}
+  @keyframes zzzFloat{0%,100%{transform:translateY(0);opacity:.35;}50%{transform:translateY(-9px);opacity:.9;}}
   .pet-name{font-size:20px;font-weight:800;color:var(--ink);margin-top:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
   .pet-name .pencil{font-size:12px;color:var(--ink-soft);}
   .pet-mood{font-size:14.5px;font-weight:800;color:var(--pink-deep);margin-top:2px;}
@@ -619,6 +633,33 @@ function petImg(species){
   return `<img class="mascot-img" src="images/smiski-${s}.png" alt="Smiski"
     onerror="mascotFallback(this,'idle')" style="width:100%;height:100%;object-fit:contain;display:block">`;
 }
+
+/* ============================================================
+   ✏️  WRITE YOUR OWN REMINDER MESSAGES HERE  ✏️
+   These are the cute nudges she gets when her trays are OUT and
+   she hasn't hit her goal yet. One is picked at random each time.
+   • Add, remove, or reword any of them — keep them wholesome 💕
+   • Use ${pet} anywhere and it becomes her Smiski's name.
+   • title = the bold line, body = the smaller line underneath.
+   ============================================================ */
+const REMINDER_MESSAGES=[
+  {title:"Psst… trays back in? 🌷",        body:"${pet} is waiting to see you glow 💕"},
+  {title:"A little nudge from ${pet} 🌱",   body:"Pop those trays in — you're doing amazing!"},
+  {title:"Tray o'clock! 🕰️🌷",             body:"Your smile (and ${pet}) miss you already 💙"},
+  {title:"Hi love 💕",                      body:"Time to tuck those trays back in for me?"},
+  {title:"${pet} did a little hop! 🐾",     body:"That means: trays in, please! 22 hours, superstar ✨"},
+  {title:"Quick smile check-in 🦷",         body:"Slip those trays back in — future-you says thanks 💙"},
+  {title:"Keep ${pet} glowing ✨",          body:"A few more hours today and you've got it 🌷"},
+  {title:"You've got this 💪🌷",            body:"Trays back in whenever you're ready, no rush 💕"}
+];
+function pickReminder(){
+  const list=(Array.isArray(REMINDER_MESSAGES)&&REMINDER_MESSAGES.length)
+    ? REMINDER_MESSAGES : [{title:"Trays back in? 🌷",body:"You've got this 💕"}];
+  const m=list[Math.floor(Math.random()*list.length)];
+  const pet=state.pet.name||'your buddy';
+  const fill=(s)=>String(s).replace(/\$\{pet\}/g,pet);
+  return {title:fill(m.title), body:fill(m.body)};
+}
 /* A potted tulip that grows with the pet's care (pct 0..100) */
 function growTulipSVG(pct){
   const p=Math.max(0,Math.min(100,pct))/100;
@@ -802,6 +843,49 @@ function celebrateBloom(){
   petalRain(44);
 }
 
+/* ----- pet aliveness: idle movement, reactions, taps ----- */
+function petReact(kind){
+  const a=document.getElementById('petAnim'); if(!a) return;
+  a.classList.remove('hop','wiggle','spin');
+  void a.offsetWidth;                        // restart the animation
+  a.classList.add(kind);
+  clearTimeout(a._reset);
+  a._reset=setTimeout(()=>a.classList.remove(kind),820);
+}
+function spawnHearts(n){
+  const host=document.getElementById('petHero');
+  if(!host||!state.pet.chosen) return;
+  const icons=['💕','💚','🌷','✨','💙'];
+  for(let i=0;i<n;i++){
+    const el=document.createElement('div');
+    el.className='float-heart';
+    el.textContent=icons[Math.floor(Math.random()*icons.length)];
+    el.style.left=(40+Math.random()*20)+'%';
+    el.style.top=(26+Math.random()*18)+'%';
+    el.style.animationDelay=(Math.random()*0.25)+'s';
+    host.appendChild(el);
+    setTimeout(()=>el.remove(),1600);
+  }
+}
+function petPoke(){
+  if(!state.pet.chosen) return;
+  petReact(Math.random()<0.5?'hop':'wiggle');
+  spawnHearts(3);
+  const n=state.pet.name||'your buddy';
+  const lines=[`${n} loves you 💕`,`boop! 💚`,`${n}: "keep those trays in!" 🌷`,`${n} did a happy wiggle ✨`,`${n} is so glad you're here 💙`,`${n} believes in you! 🌟`];
+  toast(lines[Math.floor(Math.random()*lines.length)]);
+}
+// every few seconds the pet does something cute on its own
+function petIdleTick(){
+  if(document.hidden || !state.pet.chosen) return;
+  if(!document.getElementById('petAnim')) return;
+  const stage=petStage(), r=Math.random();
+  if(stage==='faint') return;                          // too tired to play
+  if(stage==='thriving'){ petReact(r<0.5?'hop':'wiggle'); if(r<0.4) spawnHearts(2); }
+  else if(stage==='happy'){ if(r<0.7) petReact(r<0.4?'hop':'wiggle'); }
+  else if(r<0.35){ petReact('wiggle'); }               // sleepy: an occasional stir
+}
+
 /* ----- landing / intro ----- */
 function openIntro(){
   document.getElementById('introLogo').innerHTML=logoSVG();
@@ -895,7 +979,8 @@ function toggleWear(){
   if(!state.isIn) state.lastReminder=Date.now(); // give a grace window before nudging
   save(); render();
   if(state.isIn){
-    toast('In they go — you\'ve got this 💙');
+    if(state.pet.chosen){ petReact('hop'); spawnHearts(2); }
+    toast(state.pet.chosen?`In they go — ${state.pet.name} is happy 💙`:'In they go — you\'ve got this 💙');
   }else{
     toast('Trays out — enjoy, come back soon 🌷');
   }
@@ -908,6 +993,7 @@ function checkGoalCelebration(){
   if(metGoal(k) && celebratedToday!==k){
     celebratedToday=k;
     awardGoal(k);
+    if(state.pet.chosen){ petReact('spin'); spawnHearts(5); }
     petalRain(26);
     const s=currentStreak();
     const who=state.pet.chosen?state.pet.name:'your smile';
@@ -950,7 +1036,8 @@ function checkReminders(){
   if(Date.now()-state.lastReminder < intervalMs) return;
   state.lastReminder=Date.now(); save();
   if(!state.isIn && !metGoal(todayKey())){
-    notify('Time to pop your trays back in! 🌷','Your smile is waiting for you 💕');
+    const r=pickReminder();                 // ← messages live in REMINDER_MESSAGES up top
+    notify(r.title, r.body);
   }
   // if trays are already in (or goal met), stay quiet — no nagging 💙
 }
@@ -968,6 +1055,7 @@ function doneBands(){
     growTulipBy(6);
   }
   save(); render();
+  if(state.pet.chosen){ petReact('wiggle'); spawnHearts(2); }
   petalRain(18);
   toast(state.pet.chosen?`Fresh bands in — ${state.pet.name} loves you for it ✨`:'Fresh bands in — nicely done ✨');
 }
@@ -1130,19 +1218,26 @@ function render(){
   // if a tulip finished blooming, celebrate (once, when nothing is blocking)
   if(pendingBloom && state.pet.chosen && !pickerOpen()){ pendingBloom=false; celebrateBloom(); }
 }
+let petSig=null;
 function renderPetHero(){
   const el=document.getElementById('petHero');
   if(!el) return;
-  if(!state.pet.chosen){ el.style.display='none'; return; }
-  el.style.display='';
+  if(!state.pet.chosen){ el.style.display='none'; petSig=null; return; }
   const stage=petStage();
   const h=petHealth();
   const n=state.pet.name||'your buddy';
-  const {m:mood,s:sub}=petMoodCopy(stage);
   const k=todayKey();
   const trayDone=metGoal(k);
   const trayPartial=wornHoursToday()>=state.goalHours*0.6;
   const bandsDone=(state.bandLog[k]||0)>0;
+  // only rebuild when something visible actually changed — otherwise the pet's
+  // idle animation would restart every second and look janky
+  const sig=[state.pet.species,stage,n,h,state.pet.blooms,Math.floor(state.pet.tulip),trayDone,trayPartial,bandsDone].join('|');
+  if(sig===petSig) return;
+  petSig=sig;
+  el.style.display='';
+  const {m:mood,s:sub}=petMoodCopy(stage);
+  const sleepy=(stage==='sleepy'||stage==='faint');
   const buds='🌷'.repeat(Math.min(state.pet.blooms,10));
   const gardenLine = state.pet.blooms>0
     ? `<div class="garden">Tulips grown for ${n}: <span class="buds">${buds}${state.pet.blooms>10?` +${state.pet.blooms-10}`:''}</span></div>`
@@ -1150,8 +1245,11 @@ function renderPetHero(){
   el.innerHTML=`
     <button class="pet-change" onclick="openPicker(false)">🔄 change</button>
     <div class="pet-stage">
+      ${sleepy?'<div class="pet-zzz">💤</div>':''}
       <div class="pet-figure">
-        <div class="pet-img pet-${stage}">${petImg(state.pet.species)}</div>
+        <div class="pet-anim ${sleepy?'calm':''}" id="petAnim" onclick="petPoke()">
+          <div class="pet-img pet-${stage}">${petImg(state.pet.species)}</div>
+        </div>
         <div class="pet-tulip">${growTulipSVG(state.pet.tulip)}</div>
       </div>
     </div>
@@ -1325,6 +1423,9 @@ function boot(){
     checkReminders();
     render();
   }, 1000);
+
+  // the pet does something cute on its own every few seconds
+  setInterval(petIdleTick, 4600);
 
   // handle returning to the tab after background
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ accrue(); processNeglect(); checkReminders(); render(); renderPhotos(); }});
