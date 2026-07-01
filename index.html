@@ -551,7 +551,7 @@
     <div class="picker-sub">This little one grows stronger every day you wear your trays and change your bands — and grows tulips for you along the way. Keep them glowing 💕</div>
     <div class="picker-grid" id="pickerGrid"></div>
     <label class="picker-name-lbl">Give them a name</label>
-    <input id="petNameInput" class="picker-name" maxlength="14" placeholder="e.g. Mochi" />
+    <input id="petNameInput" class="picker-name" maxlength="14" placeholder="e.g. AS" />
     <button class="btn" id="pickerConfirm" onclick="confirmPet()" style="margin-top:16px">Start caring 💕</button>
     <button class="picker-close" id="pickerClose" onclick="closePicker()">maybe later</button>
   </div>
@@ -622,11 +622,11 @@ function mascotFallback(img,mood){
 }
 /* The Smiski pets she can adopt. id -> images/smiski-<id>.png */
 const PETS=[
-  {id:'idle',   label:'Yoga',     name:'Yuzu'},
-  {id:'happy',  label:'Beats',    name:'Beato'},
-  {id:'tulip',  label:'Sleepy',   name:'Dozy'},
-  {id:'kitty',  label:'Kitty',    name:'Mochi'},
-  {id:'reader', label:'Bookworm', name:'Bean'}
+  {id:'idle',   label:'Yoga',     name:'AS'},
+  {id:'happy',  label:'Beats',    name:'Max'},
+  {id:'tulip',  label:'Sleepy',   name:'Nikki'},
+  {id:'kitty',  label:'Kitty',    name:'Mike'},
+  {id:'reader', label:'Bookworm', name:'Haalaand'}
 ];
 function petImg(species){
   const s=PETS.some(p=>p.id===species)?species:'idle';
