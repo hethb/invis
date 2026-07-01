@@ -242,6 +242,16 @@
   .picker-name:focus{border-color:var(--pink);}
   .picker-close{margin-top:10px;font-size:12px;font-weight:800;color:var(--ink-soft);background:none;border:none;cursor:pointer;}
 
+  /* ---------- Landing / intro ---------- */
+  .intro-card{text-align:left;}
+  .intro-logo{width:74px;height:74px;margin:0 auto 8px;filter:drop-shadow(0 6px 10px rgba(228,150,150,.35));animation:floaty 5s ease-in-out infinite;}
+  .intro-hello{font-size:13.5px;font-weight:700;color:var(--ink-soft);text-align:center;margin:10px 4px 16px;line-height:1.5;}
+  .feat{display:flex;gap:12px;align-items:flex-start;padding:11px 13px;background:var(--cream-2);border-radius:16px;margin-bottom:10px;}
+  .feat-ic{font-size:22px;flex:0 0 auto;}
+  .feat b{font-size:14px;color:var(--ink);}
+  .feat p{margin:2px 0 0;font-size:12px;color:var(--ink-soft);font-weight:600;line-height:1.38;}
+  .intro-note{font-size:11.5px;font-weight:700;color:var(--ink-soft);text-align:center;margin-top:14px;line-height:1.4;padding:0 6px;}
+
   /* ---------- Bottom nav ---------- */
   nav.tabbar{
     position:fixed;left:0;right:0;bottom:0;z-index:40;
@@ -505,6 +515,21 @@
   <div class="tap">tap anywhere to keep going 💕</div>
 </div>
 
+<!-- Welcome / landing -->
+<div class="picker-overlay intro-overlay" id="intro">
+  <div class="picker-card intro-card">
+    <div class="intro-logo" id="introLogo"></div>
+    <div class="picker-title" style="text-align:center">Welcome to Tulip Trays 🌷</div>
+    <div class="intro-hello">Hi love 💕 I made this little app just for you — to make your Invisalign journey a bit more cozy, cute, and fun.</div>
+    <div class="feat"><span class="feat-ic">🦷</span><div><b>Track your wear time</b><p>One tap to pop your trays in or out — aiming for 22 hours a day.</p></div></div>
+    <div class="feat"><span class="feat-ic">🎀</span><div><b>Band reminders</b><p>Gentle nudges so you never forget a fresh set.</p></div></div>
+    <div class="feat"><span class="feat-ic">🌷</span><div><b>Tray countdown</b><p>Always know exactly when it's time for the next tray.</p></div></div>
+    <div class="feat"><span class="feat-ic">🌱</span><div><b>Your very own Smiski</b><p>Pick a little buddy — every day you wear your trays and change your bands keeps it glowing and grows a tulip, just for you.</p></div></div>
+    <div class="intro-note">Everything saves right on your phone. No accounts, no fuss — just you and your buddy 💙</div>
+    <button class="btn" onclick="startFromIntro()" style="margin-top:16px">Meet your Smiski 🌱</button>
+  </div>
+</div>
+
 <!-- Pet picker -->
 <div class="picker-overlay" id="picker">
   <div class="picker-card">
@@ -651,6 +676,7 @@ const defaultState={
   photos:[],               // {date, src}
   bestStreak:0,
   seenWelcome:false,
+  seenIntro:false,
   remindersOn:false,
   reminderIntervalMin:60,
   lastReminder:Date.now(),
@@ -774,6 +800,17 @@ function celebrateBloom(){
   const n=state.pet.name||'your buddy';
   bloom('A tulip bloomed! 🌷',`You grew tulip #${state.pet.blooms} for ${n}. Look how happy they are — this is all you 💕`, state.pet.chosen?state.pet.species:'happy');
   petalRain(44);
+}
+
+/* ----- landing / intro ----- */
+function openIntro(){
+  document.getElementById('introLogo').innerHTML=logoSVG();
+  document.getElementById('intro').classList.add('show');
+}
+function startFromIntro(){
+  state.seenIntro=true; save();
+  document.getElementById('intro').classList.remove('show');
+  openPicker(true);
 }
 
 /* ----- pet picker ----- */
@@ -1267,8 +1304,11 @@ function boot(){
   render();
   renderPhotos();
 
-  // first run: let her adopt a Smiski buddy
-  if(!state.pet.chosen){ setTimeout(()=>openPicker(true),400); }
+  // first run: welcome her, then let her adopt a Smiski buddy
+  if(!state.pet.chosen){
+    if(!state.seenIntro) setTimeout(openIntro,350);
+    else setTimeout(()=>openPicker(true),350);
+  }
 
   // gentle first-open hello
   if(!state.seenWelcome){
