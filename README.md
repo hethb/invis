@@ -7,9 +7,21 @@ A cute, loving Invisalign companion app — a little gift to help keep that smil
 - **Bands** — rubber-band change countdown with a satisfying "Done!" celebration
 - **Trays** — current tray tracker, days-left countdown, and a "Switch Tray" bloom celebration
 - **Progress** — streak tracker with a growing tulip stem, plus a smile photo timeline
+- **Reminders** — on the Home tab, gentle hourly (editable) nudges to keep the trays in
 
 Soft pastels, rounded everything, a tulip motif, and a glow-y Smiski-style mascot that
 cheers her on. All data is saved locally in the browser — no accounts, no backend.
+Everything starts fresh at zero (Tray 1, no streak, empty week).
+
+## Reminders / notifications
+Turn them on from the **Reminders** card on Home. They nudge her when the trays are out.
+They work while the app is open; for alerts when it's closed, she should **add it to her
+home screen** and **allow notifications** when prompted (iOS 16.4+ / Android Chrome).
+
+## Custom Smiski mascot
+Want real Smiski photos instead of the drawn one? Drop images into the `images/` folder
+(`smiski-idle.png`, `smiski-happy.png`, `smiski-tulip.png`). See `images/README.md`.
+Missing files automatically fall back to the built-in SVG.
 
 ## How to open it
 Just open `index.html` in any modern browser (double-click works). It's fully self-contained.

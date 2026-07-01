@@ -1,5 +1,5 @@
 /* Tulip Trays — tiny offline cache so the app opens anywhere 🌷 */
-const CACHE = 'tulip-trays-v1';
+const CACHE = 'tulip-trays-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -24,6 +24,17 @@ self.addEventListener('activate', (e) => {
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
+  );
+});
+
+// tapping a reminder notification opens (or focuses) the app
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      if (self.clients.openWindow) return self.clients.openWindow('./index.html');
+    })
   );
 });
 

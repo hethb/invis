@@ -321,6 +321,21 @@
         <button onclick="adjGoal(1)">+</button>
       </div>
     </div>
+
+    <div class="card">
+      <h2>🔔 Reminders</h2>
+      <div class="hint">Gentle nudges to keep your trays in when they're out.</div>
+      <div id="remControls"></div>
+      <div class="field">
+        <label>Remind me every</label>
+        <div class="stepper">
+          <button onclick="adjRem(-1)">–</button>
+          <div class="val"><span id="remVal">60</span><small>minutes</small></div>
+          <button onclick="adjRem(1)">+</button>
+        </div>
+      </div>
+      <div class="photo-note" style="background:#EAF3FB;border-color:#C9DEF1">💡 Reminders nudge you while Tulip Trays is open. For alerts when it's closed, add it to your home screen and allow notifications 💙</div>
+    </div>
   </section>
 
   <!-- BANDS -->
@@ -486,6 +501,20 @@ function smiskiSVG(mood){
     ${mouth}
   </svg>`;
 }
+/* Mascot: use a real Smiski photo from images/smiski-<mood>.png if present,
+   otherwise fall back to the hand-drawn SVG. Drop your own images in to swap. */
+function mascot(mood){
+  const m=(mood==='idle'||mood==='happy'||mood==='tulip')?mood:'idle';
+  return `<img class="mascot-img" src="images/smiski-${m}.png" alt="Smiski mascot"
+    onerror="mascotFallback(this,'${m}')"
+    style="width:100%;height:100%;object-fit:contain;display:block">`;
+}
+function mascotFallback(img,mood){
+  const span=document.createElement('span');
+  span.style.cssText='display:block;width:100%;height:100%';
+  span.innerHTML=smiskiSVG(mood);
+  img.replaceWith(span);
+}
 /* Combined app logo: tulip growing from a smiski silhouette */
 function logoSVG(){
   return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -501,7 +530,7 @@ function logoSVG(){
 }
 
 /* ---------- Storage ---------- */
-const KEY='tulipTrays.v1';
+const KEY='tulipTrays.v2';
 const todayKey=(d=new Date())=>{
   const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
 };
@@ -514,13 +543,17 @@ const defaultState={
   goalHours:22,
   bandIntervalH:12,
   lastBandChange:Date.now(),
-  trayNum:7,
+  trayNum:1,
   trayTotal:24,
   trayDurDays:7,
   trayStart:Date.now(),
   photos:[],               // {date, src}
   bestStreak:0,
-  seenWelcome:false
+  seenWelcome:false,
+  remindersOn:false,
+  reminderIntervalMin:60,
+  lastReminder:Date.now(),
+  notifyAsked:false
 };
 let state=load();
 
@@ -599,6 +632,7 @@ function toggleWear(){
   accrue();
   state.isIn=!state.isIn;
   state.lastTick=Date.now();
+  if(!state.isIn) state.lastReminder=Date.now(); // give a grace window before nudging
   save(); render();
   if(state.isIn){
     toast('In they go — you\'ve got this 💙');
@@ -617,6 +651,46 @@ function checkGoalCelebration(){
     const s=currentStreak();
     toast(s>1?`${s} days in a row — your smile thanks you 💙`:'22 hours today — you did it! 🌷');
   }
+}
+
+/* ---------- Reminders / notifications ---------- */
+function notify(title,body){
+  try{
+    if('Notification' in window && Notification.permission==='granted'){
+      if(navigator.serviceWorker && navigator.serviceWorker.controller){
+        navigator.serviceWorker.ready
+          .then(r=>r.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',tag:'tulip-reminder',renotify:true}))
+          .catch(()=>{ new Notification(title,{body,icon:'icon-192.png'}); });
+      }else{
+        new Notification(title,{body,icon:'icon-192.png'});
+      }
+    }
+  }catch(e){/* ignore */}
+  toast(title);                     // always show an in-app nudge too
+}
+async function enableReminders(){
+  state.remindersOn=true; state.notifyAsked=true; state.lastReminder=Date.now();
+  if('Notification' in window && Notification.permission==='default'){
+    try{ await Notification.requestPermission(); }catch(e){}
+  }
+  save(); render();
+  if('Notification' in window && Notification.permission==='granted'){
+    notify('Reminders on 🔔','I\'ll gently remind you to keep those trays in 💙');
+  }else{
+    toast('Reminders on — keep the app open for nudges 💙');
+  }
+}
+function disableReminders(){ state.remindersOn=false; save(); render(); toast('Reminders paused 💤'); }
+function adjRem(d){ state.reminderIntervalMin=Math.min(360,Math.max(15,state.reminderIntervalMin+d*15)); save(); render(); }
+function checkReminders(){
+  if(!state.remindersOn) return;
+  const intervalMs=state.reminderIntervalMin*60000;
+  if(Date.now()-state.lastReminder < intervalMs) return;
+  state.lastReminder=Date.now(); save();
+  if(!state.isIn && !metGoal(todayKey())){
+    notify('Time to pop your trays back in! 🌷','Your smile is waiting for you 💕');
+  }
+  // if trays are already in (or goal met), stay quiet — no nagging 💙
 }
 
 function adjGoal(d){ state.goalHours=Math.min(24,Math.max(1,state.goalHours+d)); save(); render(); }
@@ -694,6 +768,15 @@ function render(){
   document.getElementById('wornPct').textContent=Math.round(pct*100)+'%';
   document.getElementById('goalVal').textContent=goal;
   document.getElementById('home-date').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+
+  // reminders card
+  const rc=document.getElementById('remControls');
+  if(rc){
+    rc.innerHTML = state.remindersOn
+      ? `<button class="btn ghost" onclick="disableReminders()">🔕 Pause reminders</button>`
+      : `<button class="btn blue" onclick="enableReminders()">🔔 Turn on reminders</button>`;
+    document.getElementById('remVal').textContent=state.reminderIntervalMin;
+  }
 
   // toggle button
   const btn=document.getElementById('toggleBtn');
@@ -787,7 +870,7 @@ function renderPhotos(){
   const tl=document.getElementById('timeline');
   if(!state.photos.length){
     tl.innerHTML=`<div class="empty">
-      <div class="smiski smiski-idle">${smiskiSVG('tulip')}</div>
+      <div class="smiski smiski-idle">${mascot('tulip')}</div>
       <p>No photos yet — add your first smile 🌷<br/>Future-you will love looking back.</p>
     </div>`;
     return;
@@ -854,7 +937,7 @@ function petalRain(n=24){
 function bloom(title,sub,mood){
   document.getElementById('bloomTitle').textContent=title;
   document.getElementById('bloomSub').textContent=sub;
-  document.getElementById('bloomSmiski').innerHTML=smiskiSVG(mood||'happy');
+  document.getElementById('bloomSmiski').innerHTML=mascot(mood||'happy');
   const wrap=document.getElementById('bloomFlowers');
   wrap.innerHTML='';
   for(let i=0;i<14;i++){
@@ -886,7 +969,7 @@ function renderWelcome(){
   const hour=new Date().getHours();
   const greet = hour<5?'Late night, love' : hour<12?'Good morning, love' : hour<18?'Hi love' : 'Good evening, love';
   document.getElementById('welcome').innerHTML=`
-    <div class="smiski smiski-idle">${smiskiSVG('idle')}</div>
+    <div class="smiski smiski-idle">${mascot('idle')}</div>
     <p>${greet} — let's keep that smile glowing 🌷<br/><small>I'm cheering you on, always 💕</small></p>`;
 }
 
@@ -910,10 +993,10 @@ function boot(){
   }
 
   // ticking clock — updates ring, countdowns, accrues wear time
-  setInterval(()=>{ accrue(); render(); }, 1000);
+  setInterval(()=>{ accrue(); checkReminders(); render(); }, 1000);
 
   // handle returning to the tab after background
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ accrue(); render(); renderPhotos(); }});
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ accrue(); checkReminders(); render(); renderPhotos(); }});
 
   // register service worker for PWA (only works when served over http/https)
   if('serviceWorker' in navigator && location.protocol.startsWith('http')){
