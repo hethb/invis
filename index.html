@@ -192,6 +192,56 @@
   .empty .smiski{width:96px;height:96px;margin:0 auto 8px;display:block;}
   .empty p{font-size:14px;font-weight:700;margin:6px 0 0;}
 
+  /* ---------- Pet (main premise) ---------- */
+  .pet-hero{background:linear-gradient(160deg,#FFFDF9,rgba(191,215,237,.22));text-align:center;position:relative;}
+  .pet-stage{position:relative;height:158px;display:flex;align-items:flex-end;justify-content:center;}
+  .pet-figure{display:flex;align-items:flex-end;height:100%;}
+  .pet-img{width:128px;height:150px;position:relative;z-index:2;transition:filter .6s ease,opacity .6s ease;}
+  .pet-tulip{width:60px;height:120px;align-self:flex-end;position:relative;z-index:1;margin-left:-4px;}
+  .pet-thriving{animation:breathe 3.6s ease-in-out infinite,glowStrong 3.6s ease-in-out infinite;}
+  .pet-happy{animation:breathe 4.2s ease-in-out infinite,glowSoft 4.5s ease-in-out infinite;}
+  .pet-sleepy{filter:saturate(.7) brightness(1.03);opacity:.92;animation:breathe 5.6s ease-in-out infinite;}
+  .pet-faint{filter:grayscale(.55) brightness(1.06);opacity:.6;animation:breathe 7s ease-in-out infinite;}
+  @keyframes glowStrong{0%,100%{filter:drop-shadow(0 3px 10px rgba(150,220,160,.55));}50%{filter:drop-shadow(0 3px 22px rgba(150,220,160,.95));}}
+  @keyframes glowSoft{0%,100%{filter:drop-shadow(0 3px 7px rgba(174,201,232,.4));}50%{filter:drop-shadow(0 3px 15px rgba(174,201,232,.8));}}
+  .pet-name{font-size:20px;font-weight:800;color:var(--ink);margin-top:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+  .pet-name .pencil{font-size:12px;color:var(--ink-soft);}
+  .pet-mood{font-size:14.5px;font-weight:800;color:var(--pink-deep);margin-top:2px;}
+  .vitality{height:14px;border-radius:10px;background:#EEF3F8;overflow:hidden;margin:12px 6px 4px;box-shadow:inset 0 1px 3px rgba(0,0,0,.06);}
+  .vitality-fill{height:100%;border-radius:10px;transition:width .8s cubic-bezier(.2,.8,.2,1);}
+  .h-thriving,.h-happy{background:linear-gradient(90deg,#B6E3C0,#7FCB94);}
+  .h-sleepy{background:linear-gradient(90deg,#F6C6C6,#F0AE8A);}
+  .h-faint{background:linear-gradient(90deg,#E7B3B3,#D98F8F);}
+  .vitality-lbl{font-size:11px;font-weight:800;color:var(--ink-soft);}
+  .pet-sub{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-top:6px;padding:0 8px;}
+  .care-chips{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+  .chip{background:var(--cream-2);border-radius:14px;padding:8px 12px;font-size:12.5px;font-weight:800;color:var(--ink-soft);border:1.5px solid transparent;}
+  .chip.partial{border-color:var(--blue-soft);color:var(--blue-deep);}
+  .chip.done{background:#E7F6EA;color:#5DA972;border-color:#BFE7C8;}
+  .garden{margin-top:13px;font-size:13px;font-weight:800;color:var(--ink);line-height:1.5;}
+  .garden .buds{letter-spacing:1px;}
+  .garden.dim{color:var(--ink-soft);font-weight:700;font-size:12px;}
+  .pet-change{position:absolute;top:12px;right:12px;background:#fff;border:1.5px solid var(--pink-soft);color:var(--pink-deep);border-radius:12px;font-size:11px;font-weight:800;padding:6px 9px;cursor:pointer;z-index:3;}
+  .pet-change:active{transform:scale(.92);}
+
+  /* ---------- Pet picker ---------- */
+  .picker-overlay{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:18px;
+    background:radial-gradient(circle at 50% 28%,rgba(255,248,244,.97),rgba(255,238,240,.95));}
+  .picker-overlay.show{display:flex;animation:fadeIn .3s ease both;}
+  .picker-card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:22px 18px;max-width:420px;width:100%;max-height:94vh;overflow:auto;text-align:center;animation:fadeUp .4s ease both;}
+  .picker-title{font-size:21px;font-weight:800;background:linear-gradient(90deg,var(--pink-deep),var(--blue-deep));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .picker-sub{font-size:12.5px;font-weight:700;color:var(--ink-soft);margin:8px 6px 16px;line-height:1.45;}
+  .picker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .pet-tile{border-radius:18px;padding:8px 6px;background:var(--cream-2);border:2.5px solid transparent;cursor:pointer;transition:transform .12s ease,border-color .2s ease,background .2s ease;}
+  .pet-tile:active{transform:scale(.94);}
+  .pet-tile.sel{border-color:var(--pink);background:#fff;box-shadow:var(--shadow-sm);}
+  .pet-tile-img{width:100%;height:70px;}
+  .pet-tile-name{font-size:11px;font-weight:800;color:var(--ink-soft);margin-top:3px;}
+  .picker-name-lbl{display:block;font-size:12.5px;font-weight:800;margin:18px 0 7px;color:var(--ink);}
+  .picker-name{width:100%;border:1.5px solid var(--pink-soft);border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;text-align:center;color:var(--ink);outline:none;font-family:inherit;}
+  .picker-name:focus{border-color:var(--pink);}
+  .picker-close{margin-top:10px;font-size:12px;font-weight:800;color:var(--ink-soft);background:none;border:none;cursor:pointer;}
+
   /* ---------- Bottom nav ---------- */
   nav.tabbar{
     position:fixed;left:0;right:0;bottom:0;z-index:40;
@@ -269,7 +319,7 @@
     <div class="logo" id="logoSlot"></div>
     <div>
       <h1>Tulip Trays</h1>
-      <div class="sub">your little smile companion 🌷</div>
+      <div class="sub">grow your Smiski, glow your smile 🌷</div>
     </div>
   </header>
 
@@ -277,8 +327,11 @@
 
   <!-- HOME -->
   <section class="screen active" id="screen-home">
+    <div class="card pet-hero" id="petHero" style="display:none"></div>
+
     <div class="card center">
       <h2 style="justify-content:center">Today's wear time</h2>
+      <div class="hint" style="margin-bottom:2px">every hour keeps your buddy strong 💪</div>
       <div class="hint" id="home-date"></div>
       <div class="ring-wrap">
         <svg width="230" height="230" viewBox="0 0 230 230">
@@ -377,7 +430,7 @@
     <div class="card center">
       <h2 style="justify-content:center">Current tray</h2>
       <div class="tulip" id="trayTulip" style="width:56px;height:56px;margin:8px auto 4px"></div>
-      <div style="font-size:30px;font-weight:800;color:var(--pink-deep)">Tray <span id="trayNum">7</span></div>
+      <div style="font-size:30px;font-weight:800;color:var(--pink-deep)">Tray <span id="trayNum">1</span></div>
       <div class="count-sub">of <span id="trayTotal">24</span> total</div>
       <div style="margin:16px 0 4px;height:12px;background:#EEF3F8;border-radius:10px;overflow:hidden">
         <div id="trayProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--pink),var(--pink-deep));border-radius:10px;transition:width .8s cubic-bezier(.2,.8,.2,1)"></div>
@@ -452,6 +505,19 @@
   <div class="tap">tap anywhere to keep going 💕</div>
 </div>
 
+<!-- Pet picker -->
+<div class="picker-overlay" id="picker">
+  <div class="picker-card">
+    <div class="picker-title">Choose your Smiski buddy 🌱</div>
+    <div class="picker-sub">This little one grows stronger every day you wear your trays and change your bands — and grows tulips for you along the way. Keep them glowing 💕</div>
+    <div class="picker-grid" id="pickerGrid"></div>
+    <label class="picker-name-lbl">Give them a name</label>
+    <input id="petNameInput" class="picker-name" maxlength="14" placeholder="e.g. Mochi" />
+    <button class="btn" id="pickerConfirm" onclick="confirmPet()" style="margin-top:16px">Start caring 💕</button>
+    <button class="picker-close" id="pickerClose" onclick="closePicker()">maybe later</button>
+  </div>
+</div>
+
 <script>
 /* ============================================================
    Tulip Trays — a little Invisalign companion, made with love
@@ -515,6 +581,41 @@ function mascotFallback(img,mood){
   span.innerHTML=smiskiSVG(mood);
   img.replaceWith(span);
 }
+/* The Smiski pets she can adopt. id -> images/smiski-<id>.png */
+const PETS=[
+  {id:'idle',   label:'Yoga',     name:'Yuzu'},
+  {id:'happy',  label:'Beats',    name:'Beato'},
+  {id:'tulip',  label:'Sleepy',   name:'Dozy'},
+  {id:'kitty',  label:'Kitty',    name:'Mochi'},
+  {id:'reader', label:'Bookworm', name:'Bean'}
+];
+function petImg(species){
+  const s=PETS.some(p=>p.id===species)?species:'idle';
+  return `<img class="mascot-img" src="images/smiski-${s}.png" alt="Smiski"
+    onerror="mascotFallback(this,'idle')" style="width:100%;height:100%;object-fit:contain;display:block">`;
+}
+/* A potted tulip that grows with the pet's care (pct 0..100) */
+function growTulipSVG(pct){
+  const p=Math.max(0,Math.min(100,pct))/100;
+  const top=Math.round(56 - p*38);            // stem top climbs as it grows
+  const budStage = p<0.18?0 : p<0.48?1 : p<0.8?2 : 3;
+  const leaf1 = p>0.15?`<path d="M35 50 C26 48 21 41 23 35 C31 37 35 43 35 50 Z" fill="#9BD3A8"/>`:'';
+  const leaf2 = p>0.42?`<path d="M35 54 C44 52 49 45 47 39 C39 41 35 47 35 54 Z" fill="#B6E3C0"/>`:'';
+  let flower='';
+  if(budStage===0) flower=`<circle cx="35" cy="${top}" r="3.2" fill="#9BD3A8"/>`;
+  else if(budStage===1) flower=`<ellipse cx="35" cy="${top}" rx="5" ry="8" fill="#9BD3A8"/>`;
+  else if(budStage===2) flower=`<ellipse cx="35" cy="${top}" rx="7" ry="11" fill="#F4A6A6"/><ellipse cx="35" cy="${top}" rx="4" ry="9" fill="#F6C6C6"/>`;
+  else flower=`
+    <path d="M23 ${top+4} C21 ${top-9} 28 ${top-16} 35 ${top-16} C42 ${top-16} 49 ${top-9} 47 ${top+4} C47 ${top+12} 40 ${top+16} 35 ${top+16} C30 ${top+16} 23 ${top+12} 23 ${top+4} Z" fill="#F4A6A6"/>
+    <path d="M23 ${top+4} C23 ${top-6} 28 ${top-14} 35 ${top-14} C35 ${top-2} 35 ${top+10} 35 ${top+16} C30 ${top+16} 23 ${top+12} 23 ${top+4} Z" fill="#F6C6C6"/>
+    <path d="M47 ${top+4} C47 ${top-6} 42 ${top-14} 35 ${top-14} C35 ${top-2} 35 ${top+10} 35 ${top+16} C40 ${top+16} 47 ${top+12} 47 ${top+4} Z" fill="#E88C8C"/>`;
+  return `<svg viewBox="0 0 70 84" width="100%" height="100%">
+    <path d="M35 60 C35 56 35 ${top+2} 35 ${top}" stroke="#7FBF8E" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+    ${leaf1}${leaf2}${flower}
+    <path d="M23 62 L47 62 L44 79 Q35 82 26 79 Z" fill="#E39C9C"/>
+    <rect x="21" y="58" width="28" height="7" rx="3.5" fill="#EFB4B4"/>
+  </svg>`;
+}
 /* Combined app logo: tulip growing from a smiski silhouette */
 function logoSVG(){
   return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
@@ -553,17 +654,36 @@ const defaultState={
   remindersOn:false,
   reminderIntervalMin:60,
   lastReminder:Date.now(),
-  notifyAsked:false
+  notifyAsked:false,
+  bandLog:{},              // dateKey -> number of band changes
+  pet:{
+    chosen:false,
+    species:'idle',
+    name:'Sprout',
+    health:60,             // vitality 0..100
+    tulip:0,               // growth toward the current tulip (0..100)
+    blooms:0,              // completed tulips grown
+    creditGoal:{},         // dateKey -> already rewarded for hitting wear goal
+    lastDecay:todayKey()   // last day neglect was evaluated
+  }
 };
 let state=load();
 
 function load(){
+  let s;
   try{
     const raw=localStorage.getItem(KEY);
-    if(!raw) return {...defaultState};
-    return {...defaultState,...JSON.parse(raw)};
-  }catch(e){ return {...defaultState}; }
+    s = raw ? {...defaultState,...JSON.parse(raw)} : {...defaultState};
+  }catch(e){ s={...defaultState}; }
+  // make sure nested structures exist and aren't shared with defaultState
+  s.wearLog = s.wearLog || {};
+  s.bandLog = s.bandLog || {};
+  s.pet = {...defaultState.pet, ...(s.pet||{})};
+  s.pet.creditGoal = s.pet.creditGoal || {};
+  return s;
 }
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const parseKey=(k)=>{ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); };
 function save(){
   try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){ /* storage full (photos) */ }
 }
@@ -600,6 +720,109 @@ function currentStreak(){
   if(!metGoal(todayKey(d))){ d.setDate(d.getDate()-1); } // grace: today still in progress
   while(metGoal(todayKey(d))){ streak++; d.setDate(d.getDate()-1); }
   return streak;
+}
+
+/* ---------- Smiski pet ---------- */
+let pendingBloom=false;
+function petHealth(){ return clamp(Math.round(state.pet.health),0,100); }
+function petStage(){
+  const h=petHealth();
+  if(h>=75) return 'thriving';
+  if(h>=45) return 'happy';
+  if(h>=20) return 'sleepy';
+  return 'faint';
+}
+function growTulipBy(n){
+  if(n<=0) return;
+  state.pet.tulip+=n;
+  while(state.pet.tulip>=100){ state.pet.tulip-=100; state.pet.blooms++; pendingBloom=true; }
+}
+// reward for hitting the wear-time goal on a given day (once per day)
+function awardGoal(k){
+  if(!state.pet.chosen) return false;
+  if(state.pet.creditGoal[k]) return false;
+  if(!metGoal(k)) return false;
+  state.pet.creditGoal[k]=true;
+  state.pet.health=clamp(state.pet.health+14,0,100);
+  growTulipBy(18);
+  return true;
+}
+const hadActivity=(k)=> (state.wearLog[k]||0)>0 || (state.bandLog[k]||0)>0;
+// gentle vitality drop for completed days with no goal reached
+function processNeglect(){
+  if(!state.pet.chosen) return;
+  const t=todayKey();
+  let d=parseKey(state.pet.lastDecay||t), guard=0;
+  while(todayKey(d) < t && guard<500){
+    const k=todayKey(d);
+    if(metGoal(k)) awardGoal(k);                                  // credit good days we missed finalizing
+    else if(!state.pet.creditGoal[k]) state.pet.health=clamp(state.pet.health-(hadActivity(k)?6:10),0,100);
+    d.setDate(d.getDate()+1); guard++;
+  }
+  state.pet.lastDecay=t;
+}
+function petMoodCopy(stage){
+  const n=state.pet.name||'your buddy';
+  return ({
+    thriving:{m:`${n} is thriving! 🌟`, s:'You two are unstoppable — keep glowing 🌷'},
+    happy:   {m:`${n} is happy 💕`,     s:'Your trays are keeping them strong 💙'},
+    sleepy:  {m:`${n} is getting sleepy…`, s:`Pop your trays in to perk ${n} back up 🌱`},
+    faint:   {m:`${n} misses you 💤`,   s:`A little tray time will bring ${n} back — no worries 💕`}
+  })[stage];
+}
+function celebrateBloom(){
+  const n=state.pet.name||'your buddy';
+  bloom('A tulip bloomed! 🌷',`You grew tulip #${state.pet.blooms} for ${n}. Look how happy they are — this is all you 💕`, state.pet.chosen?state.pet.species:'happy');
+  petalRain(44);
+}
+
+/* ----- pet picker ----- */
+let pickerSel=null;
+function pickerOpen(){ return document.getElementById('picker').classList.contains('show'); }
+function openPicker(force){
+  buildPickerGrid();
+  pickerSel = state.pet.chosen ? state.pet.species : PETS[0].id;
+  highlightTile();
+  const inp=document.getElementById('petNameInput');
+  inp.value = state.pet.chosen ? state.pet.name : '';
+  document.getElementById('pickerClose').style.display = force ? 'none' : '';
+  document.getElementById('picker').classList.add('show');
+}
+function closePicker(){ if(state.pet.chosen) document.getElementById('picker').classList.remove('show'); }
+function buildPickerGrid(){
+  document.getElementById('pickerGrid').innerHTML = PETS.map(p=>`
+    <div class="pet-tile" data-id="${p.id}" onclick="selectPet('${p.id}')">
+      <div class="pet-tile-img">${petImg(p.id)}</div>
+      <div class="pet-tile-name">${p.label}</div>
+    </div>`).join('');
+}
+function highlightTile(){
+  document.querySelectorAll('#pickerGrid .pet-tile').forEach(t=>t.classList.toggle('sel',t.dataset.id===pickerSel));
+}
+function selectPet(id){
+  pickerSel=id; highlightTile();
+  const p=PETS.find(x=>x.id===id);
+  const inp=document.getElementById('petNameInput');
+  if(!inp.value.trim()) inp.placeholder='e.g. '+p.name;
+}
+function confirmPet(){
+  if(!pickerSel) pickerSel=PETS[0].id;
+  const p=PETS.find(x=>x.id===pickerSel);
+  const nm=(document.getElementById('petNameInput').value||'').trim();
+  const firstTime=!state.pet.chosen;
+  state.pet.species=pickerSel;
+  state.pet.name=nm||p.name;
+  state.pet.chosen=true;
+  if(firstTime) state.pet.lastDecay=todayKey();  // start the clock fresh
+  save();
+  document.getElementById('picker').classList.remove('show');
+  render();
+  if(firstTime){ petalRain(22); }
+  toast(`Say hi to ${state.pet.name}! 🌱`);
+}
+function renamePet(){
+  const nm=prompt('Name your buddy:',state.pet.name);
+  if(nm && nm.trim()){ state.pet.name=nm.trim().slice(0,14); save(); render(); }
 }
 
 /* ---------- Navigation ---------- */
@@ -647,9 +870,11 @@ function checkGoalCelebration(){
   const k=todayKey();
   if(metGoal(k) && celebratedToday!==k){
     celebratedToday=k;
+    awardGoal(k);
     petalRain(26);
     const s=currentStreak();
-    toast(s>1?`${s} days in a row — your smile thanks you 💙`:'22 hours today — you did it! 🌷');
+    const who=state.pet.chosen?state.pet.name:'your smile';
+    toast(s>1?`${s} days in a row — ${who} is glowing 💙`:`Goal reached — ${who} is so happy 🌷`);
   }
 }
 
@@ -696,24 +921,36 @@ function checkReminders(){
 function adjGoal(d){ state.goalHours=Math.min(24,Math.max(1,state.goalHours+d)); save(); render(); }
 function adjBand(d){ state.bandIntervalH=Math.min(48,Math.max(1,state.bandIntervalH+d)); save(); render(); }
 function doneBands(){
-  state.lastBandChange=Date.now(); save(); render();
+  const k=todayKey();
+  state.lastBandChange=Date.now();
+  state.bandLog[k]=(state.bandLog[k]||0)+1;
+  // reward the pet, capped to the expected number of changes per day
+  const cap=Math.max(1,Math.ceil(24/state.bandIntervalH));
+  if(state.pet.chosen && state.bandLog[k]<=cap){
+    state.pet.health=clamp(state.pet.health+4,0,100);
+    growTulipBy(6);
+  }
+  save(); render();
   petalRain(18);
-  toast('Fresh bands in — nicely done ✨');
+  toast(state.pet.chosen?`Fresh bands in — ${state.pet.name} loves you for it ✨`:'Fresh bands in — nicely done ✨');
 }
 function adjTrayDur(d){ state.trayDurDays=Math.min(60,Math.max(1,state.trayDurDays+d)); save(); render(); }
 function adjTrayTotal(d){ state.trayTotal=Math.min(120,Math.max(state.trayNum,state.trayTotal+d)); save(); render(); }
 function adjTrayNum(d){ state.trayNum=Math.min(state.trayTotal,Math.max(1,state.trayNum+d)); save(); render(); }
 function resetTrayTimer(){ state.trayStart=Date.now(); save(); render(); toast('Tray timer restarted 🌷'); }
 function switchTray(){
+  const petMood=state.pet.chosen?state.pet.species:'happy';
   if(state.trayNum>=state.trayTotal){
-    bloom('All done! 🎉',`You finished all ${state.trayTotal} trays. Look at that gorgeous smile — I'm so proud of you 💕`,'happy');
+    bloom('All done! 🎉',`You finished all ${state.trayTotal} trays. Look at that gorgeous smile — I'm so proud of you 💕`,petMood);
     petalRain(50);
     return;
   }
   state.trayNum++;
   state.trayStart=Date.now();
+  // a fresh tray is a big milestone — give the pet a boost too
+  if(state.pet.chosen){ state.pet.health=clamp(state.pet.health+8,0,100); growTulipBy(12); }
   save(); render();
-  bloom(`Tray ${state.trayNum}! 🌷`,`One step closer to that perfect smile. ${state.trayTotal-state.trayNum} tray${state.trayTotal-state.trayNum===1?'':'s'} to go — you're doing amazing 💕`,'happy');
+  bloom(`Tray ${state.trayNum}! 🌷`,`One step closer to that perfect smile. ${state.trayTotal-state.trayNum} tray${state.trayTotal-state.trayNum===1?'':'s'} to go — you're doing amazing 💕`,petMood);
   petalRain(40);
 }
 
@@ -847,7 +1084,50 @@ function render(){
   const affirm=document.getElementById('affirm');
   affirm.textContent=affirmMsg(streak);
 
+  // PET — credit today's goal (idempotent) and render the hero
+  if(state.pet.chosen) awardGoal(todayKey());
+  renderPetHero();
+
   save();
+
+  // if a tulip finished blooming, celebrate (once, when nothing is blocking)
+  if(pendingBloom && state.pet.chosen && !pickerOpen()){ pendingBloom=false; celebrateBloom(); }
+}
+function renderPetHero(){
+  const el=document.getElementById('petHero');
+  if(!el) return;
+  if(!state.pet.chosen){ el.style.display='none'; return; }
+  el.style.display='';
+  const stage=petStage();
+  const h=petHealth();
+  const n=state.pet.name||'your buddy';
+  const {m:mood,s:sub}=petMoodCopy(stage);
+  const k=todayKey();
+  const trayDone=metGoal(k);
+  const trayPartial=wornHoursToday()>=state.goalHours*0.6;
+  const bandsDone=(state.bandLog[k]||0)>0;
+  const buds='🌷'.repeat(Math.min(state.pet.blooms,10));
+  const gardenLine = state.pet.blooms>0
+    ? `<div class="garden">Tulips grown for ${n}: <span class="buds">${buds}${state.pet.blooms>10?` +${state.pet.blooms-10}`:''}</span></div>`
+    : `<div class="garden dim">Hit your daily goal to grow ${n}'s first tulip 🌱</div>`;
+  el.innerHTML=`
+    <button class="pet-change" onclick="openPicker(false)">🔄 change</button>
+    <div class="pet-stage">
+      <div class="pet-figure">
+        <div class="pet-img pet-${stage}">${petImg(state.pet.species)}</div>
+        <div class="pet-tulip">${growTulipSVG(state.pet.tulip)}</div>
+      </div>
+    </div>
+    <div class="pet-name" onclick="renamePet()">${n} <span class="pencil">✎</span></div>
+    <div class="pet-mood">${mood}</div>
+    <div class="vitality"><div class="vitality-fill h-${stage}" style="width:${h}%"></div></div>
+    <div class="vitality-lbl">vitality ${h}%</div>
+    <div class="pet-sub">${sub}</div>
+    <div class="care-chips">
+      <div class="chip ${trayDone?'done':(trayPartial?'partial':'')}">${trayDone?'✅':'🦷'} Trays · ${trayDone?'goal met':(trayPartial?'almost there':'let\'s go')}</div>
+      <div class="chip ${bandsDone?'done':''}">${bandsDone?'✅':'🎀'} Bands · ${bandsDone?'changed':'due'}</div>
+    </div>
+    ${gardenLine}`;
 }
 function renderHistory(){
   const days=[];
@@ -937,7 +1217,7 @@ function petalRain(n=24){
 function bloom(title,sub,mood){
   document.getElementById('bloomTitle').textContent=title;
   document.getElementById('bloomSub').textContent=sub;
-  document.getElementById('bloomSmiski').innerHTML=mascot(mood||'happy');
+  document.getElementById('bloomSmiski').innerHTML=petImg(mood||'happy');
   const wrap=document.getElementById('bloomFlowers');
   wrap.innerHTML='';
   for(let i=0;i<14;i++){
@@ -982,9 +1262,13 @@ function boot(){
   buildTabs();
   renderWelcome();
   accrue();          // account for time passed while app was closed (if it was "in")
+  processNeglect();  // settle the pet's vitality for any days that passed
   if(metGoal(todayKey())) celebratedToday=todayKey(); // don't re-celebrate on load
   render();
   renderPhotos();
+
+  // first run: let her adopt a Smiski buddy
+  if(!state.pet.chosen){ setTimeout(()=>openPicker(true),400); }
 
   // gentle first-open hello
   if(!state.seenWelcome){
@@ -992,11 +1276,18 @@ function boot(){
     setTimeout(()=>petalRain(16),500);
   }
 
-  // ticking clock — updates ring, countdowns, accrues wear time
-  setInterval(()=>{ accrue(); checkReminders(); render(); }, 1000);
+  // ticking clock — updates ring, countdowns, accrues wear time, cares for the pet
+  let lastDay=todayKey();
+  setInterval(()=>{
+    accrue();
+    const t=todayKey();
+    if(t!==lastDay){ lastDay=t; processNeglect(); }   // a new day rolled over
+    checkReminders();
+    render();
+  }, 1000);
 
   // handle returning to the tab after background
-  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ accrue(); checkReminders(); render(); renderPhotos(); }});
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ accrue(); processNeglect(); checkReminders(); render(); renderPhotos(); }});
 
   // register service worker for PWA (only works when served over http/https)
   if('serviceWorker' in navigator && location.protocol.startsWith('http')){

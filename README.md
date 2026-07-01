@@ -2,6 +2,13 @@
 
 A cute, loving Invisalign companion app — a little gift to help keep that smile glowing 💕
 
+## 🌱 The main idea: your Smiski buddy
+Pick a Smiski pet and keep it alive & glowing by caring for your smile. Every day you
+hit your wear-time goal and change your bands, its **vitality** grows and it slowly
+**grows a tulip** for you. Miss a few days and it gets sleepy — a little tray time
+always brings it back (gently, never guilt-trippy). Fill the tulip and it blooms into
+your growing garden. 5 Smiskis to choose from; name it whatever you like.
+
 ## What's inside
 - **Home** — big In/Out toggle, circular wear-time ring (22h goal), last-7-days history
 - **Bands** — rubber-band change countdown with a satisfying "Done!" celebration
